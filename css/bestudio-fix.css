@@ -193,3 +193,25 @@ video {
     padding-bottom: 3.2rem !important;
   }
 }
+
+/* Cabeçalho ao descer a página: nunca fica claro com letras claras
+   por cima (letras camufladas) — fica sempre preto fosco com texto claro */
+.agnes-header,
+.agnes-header--overlay.is-solid,
+.agnes-header.is-open,
+.agnes-header--overlay.is-open {
+  background-color: #0b0a09 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: #f5efe6 !important;
+}
+.agnes-header__drawer,
+.agnes-header__currency-menu {
+  background: #14100d !important;
+}
+.agnes-header__currency-option,
+.agnes-header__nav a,
+.agnes-header__sublink,
+.agnes-header__util-link {
+  color: #f5efe6 !important;
+}
