@@ -1,0 +1,195 @@
+/* BESTUDIO — correção pedida pela dona (telemóvel em primeiro lugar)
+   Fundo preto fosco em degradê com castanho escuro, sem letras
+   camufladas, cartões separados entre si e sem tocar no fundo da página,
+   fotos e vídeos inteiros, sem zoom nem cortes, e em destaque. */
+
+/* Fundo do site inteiro: preto fosco em degradê com castanho escuro */
+html,
+body,
+main,
+.content-for-layout {
+  background: linear-gradient(180deg, #0b0a09 0%, #171009 32%, #261710 55%, #150e0a 78%, #0b0a09 100%) !important;
+  background-color: #0b0a09 !important;
+  color: #f5efe6 !important;
+}
+
+/* Secções sem fundo claro por cima do degradê */
+.agnes-section,
+.color-scheme-1,
+.color-scheme-2,
+.color-scheme-3,
+.color-scheme-4,
+.color-scheme-5 {
+  background: transparent !important;
+  color: #f5efe6 !important;
+}
+
+/* Texto claro em todo o lado, nunca escuro sobre escuro */
+.agnes-section h1,
+.agnes-section h2,
+.agnes-section h3,
+.agnes-section h4,
+.agnes-section p,
+.agnes-section li,
+.agnes-section a,
+.agnes-section span,
+.agnes-catalog__tab,
+.agnes-product-card__title,
+.agnes-product-card__subtitle,
+.agnes-product-card__price,
+.agnes-collection__title,
+.agnes-worlds__card-title,
+.agnes-footer__col-title {
+  color: #f5efe6 !important;
+}
+
+/* Texto secundário claro, nunca cinzento escuro camuflado */
+.agnes-section .agnes-product-card__subtitle,
+.agnes-section .agnes-collection__card-type,
+.agnes-section .agnes-footer__note,
+.agnes-section small {
+  color: #d8c9b8 !important;
+}
+
+/* Barras e fundos claros do tema passam a escuros */
+.agnes-catalog__bar:before {
+  background: rgba(20, 14, 10, 0.92) !important;
+  backdrop-filter: none !important;
+}
+.agnes-catalog__bar {
+  border-top-color: rgba(216, 201, 184, 0.25) !important;
+}
+
+/* Hero: foto inteira, sem zoom nem cortes, texto branco com sombra */
+.agnes-hero__media {
+  background: #0b0a09 !important;
+}
+.agnes-hero__image,
+.agnes-hero__video,
+.agnes-hero__media video {
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 78vh !important;
+  background: #0b0a09 !important;
+}
+.agnes-hero__content,
+.agnes-hero__eyebrow,
+.agnes-hero__heading,
+.agnes-hero__subheading {
+  color: #ffffff !important;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.9), 0 1px 4px rgba(0, 0, 0, 0.95) !important;
+}
+.agnes-hero__content {
+  padding-bottom: 3.2rem !important;
+}
+
+/* Cabeçalho legível sobre o fundo escuro */
+.agnes-header__logo,
+.agnes-header__logo a,
+.agnes-header__nav a {
+  color: #ffffff !important;
+}
+
+/* Fotos e vídeos em destaque, inteiros, sem zoom: moldura fosca
+   castanha, sombra suave, nunca cortados nem ampliados */
+.agnes-collection__card-media img,
+.agnes-product-card__media img,
+.agnes-worlds__card-media img,
+.agnes-worlds__card-media video,
+.agnes-cats__tile img,
+.agnes-instagram__cell img,
+.agnes-collection__promo-image,
+video {
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 66vh !important;
+  background: #0b0a09 !important;
+  border: 1px solid rgba(216, 178, 140, 0.35) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55) !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Texto sobre fotos: nunca camuflado, com sombra e fundo escurecido */
+.agnes-collection__card-info,
+.agnes-worlds__card-content,
+.agnes-cats__content {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.9) !important;
+}
+
+/* Cartões separados, com respiro, e nunca colados ao chão da página */
+.agnes-section {
+  padding-bottom: 4.8rem !important;
+}
+.agnes-collection__grid,
+.agnes-catalog__grid,
+.agnes-worlds__grid {
+  gap: 2.4rem !important;
+  padding-bottom: 2.4rem !important;
+}
+.agnes-collection__card,
+.agnes-product-card,
+.agnes-worlds__card {
+  margin-bottom: 2.4rem !important;
+  padding-bottom: 1.6rem !important;
+  background: #1a130e !important;
+  border: 1px solid rgba(216, 178, 140, 0.22) !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+}
+.agnes-footer {
+  padding-bottom: 4.8rem !important;
+}
+
+/* Telemóvel: uma coluna, cartões a toda a largura, sem rolo lateral
+   apertado e sem fotos ampliadas */
+@media screen and (max-width: 749px) {
+  .agnes-collection__grid,
+  .agnes-catalog__grid,
+  .agnes-worlds__grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 2.4rem !important;
+    overflow: visible !important;
+    scroll-snap-type: none !important;
+  }
+  .agnes-collection__card,
+  .agnes-catalog__grid > *,
+  .agnes-worlds__grid > * {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: none !important;
+  }
+  .agnes-collection__card-media,
+  .agnes-product-card__media,
+  .agnes-worlds__card-media {
+    aspect-ratio: auto !important;
+    height: auto !important;
+  }
+  .agnes-collection__card-media img,
+  .agnes-product-card__media img,
+  .agnes-worlds__card-media img,
+  .agnes-worlds__card-media video,
+  video {
+    max-height: 62vh !important;
+  }
+  /* Título do hero legível e sem ocupar o ecrã todo */
+  .agnes-hero__heading {
+    font-size: min(5.6rem, 15vw) !important;
+    line-height: 1.05 !important;
+    white-space: normal !important;
+  }
+  .agnes-hero__content {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    padding-bottom: 3.2rem !important;
+  }
+}
