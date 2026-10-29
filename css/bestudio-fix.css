@@ -215,3 +215,74 @@ video {
 .agnes-header__util-link {
   color: #f5efe6 !important;
 }
+
+/* Ronda 2 — sem zoom em NENHUMA foto, em nenhuma secção.
+   As imagens editoriais vinham com zoom 1.26 a 1.65 embutido no HTML;
+   esta regra apanha todas, sem exceção, e vence o estilo embutido. */
+img,
+video {
+  object-fit: contain !important;
+  object-position: center !important;
+  transform: none !important;
+  scale: none !important;
+  translate: none !important;
+  rotate: none !important;
+}
+.agnes-editorial__image,
+.agnes-heritage__image,
+.agnes-cats__image,
+.agnes-instagram__image,
+.agnes-collection__promo-image {
+  transform: none !important;
+  scale: 1 !important;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 66vh !important;
+}
+
+/* Cartões com espaçamento de verdade, em todas as secções */
+.agnes-collection__card,
+.agnes-product-card,
+.agnes-worlds__card,
+.agnes-cats__tile,
+.agnes-collection__promo,
+.agnes-editorial,
+.agnes-heritage {
+  margin-bottom: 2.4rem !important;
+}
+.agnes-collection__grid,
+.agnes-catalog__grid,
+.agnes-worlds__grid,
+.agnes-cats__grid {
+  gap: 2.4rem !important;
+  padding-bottom: 2.4rem !important;
+}
+
+@media screen and (max-width: 749px) {
+  /* Cada cartão mostra SÓ uma foto: a segunda foto do cartão
+     (que repetia fotos já vistas) fica escondida no telemóvel */
+  .agnes-collection__card-image--secondary {
+    display: none !important;
+  }
+  /* Galeria do Instagram no telemóvel: sem rolo infinito a repetir
+     as mesmas fotos, grelha de 2 colunas com espaço entre fotos */
+  .agnes-instagram__track {
+    animation: none !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.6rem !important;
+    overflow: visible !important;
+  }
+  .agnes-instagram__cell[aria-hidden="true"] {
+    display: none !important;
+  }
+  .agnes-instagram__cell {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  /* Secções editoriais: foto inteira, sem zoom, com espaço em baixo */
+  .agnes-editorial__image,
+  .agnes-heritage__image {
+    max-height: 58vh !important;
+  }
+}
