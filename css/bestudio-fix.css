@@ -286,3 +286,37 @@ video {
     max-height: 58vh !important;
   }
 }
+
+/* Ronda 3 — painéis que ficaram com texto claro sobre fundo claro.
+   Estes 3 painéis mantinham fundo branco/cinzento do tema, e a regra
+   geral de texto claro tornava-os ilegíveis. Passam a fundo preto
+   fosco, para o texto claro ficar legível, como no resto do site. */
+.agnes-editorial__content--boxed {
+  background: #1a130e !important;
+  background-color: #1a130e !important;
+  border-color: rgba(216, 178, 140, 0.5) !important;
+  color: #f5efe6 !important;
+}
+.agnes-editorial__content--boxed .agnes-editorial__heading,
+.agnes-editorial__content--boxed .agnes-editorial__body,
+.agnes-editorial__content--boxed .agnes-editorial__body p,
+.agnes-editorial__content--boxed .agnes-editorial__btn {
+  color: #f5efe6 !important;
+}
+.agnes-editorial__content--boxed .agnes-editorial__eyebrow {
+  color: #d8c9b8 !important;
+}
+.agnes-spinner__root {
+  background: #0b0a09 !important;
+  background-color: #0b0a09 !important;
+  color: #f5efe6 !important;
+}
+.agnes-spinner__text,
+.agnes-spinner__eyebrow,
+.agnes-spinner__heading,
+.agnes-spinner__stats,
+.agnes-spinner__stat,
+.agnes-spinner__stat-num,
+.agnes-spinner__stat-label {
+  color: #f5efe6 !important;
+}
