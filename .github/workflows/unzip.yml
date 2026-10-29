@@ -9,13 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Expand bestudio.zip to repository root
+      - name: Download and expand site archive
         run: |
           set -e
-          if [ ! -f bestudio.zip ]; then
-            echo "bestudio.zip not found; nothing to do."
-            exit 0
-          fi
+          curl -sSLf -o bestudio.zip https://github.com/fernanda312/bestudio/releases/download/site-files/bestudio.zip
+          test -s bestudio.zip
           unzip -o bestudio.zip
           shopt -s dotglob
           mv bestudio/* .
