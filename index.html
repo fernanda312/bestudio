@@ -43,13 +43,25 @@
   .step h3 { text-align: left; margin: 0 0 .4rem; font-size: 2rem; }
   .step p { text-align: left; margin: 0; color: #d8c9b8; }
   video { border-radius: 14px; border: 1px solid rgba(216,178,140,.35); }
+
+  /* Transições dinâmicas em cada secção: aparecem a desvanecer e a subir suavemente ao entrar no ecrã */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .card, .panel { transition: transform .4s ease, box-shadow .4s ease; }
+  .card:hover, .panel:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,.5); }
+  /* Parcerias em scroll horizontal automático */
+  .marquee { overflow: hidden; }
+  .marquee-track { display: flex; width: max-content; animation: partners-scroll 24s linear infinite; }
+  .marquee-group { display: flex; gap: 3rem; padding-right: 3rem; }
+  .marquee-group span { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; white-space: nowrap; color: #f5efe6; }
+  @keyframes partners-scroll { to { transform: translateX(-50%); } }
 </style>
 </head>
 <body>
 <header>
   <span class="menu">≡</span>
   <span class="logo">BESTUDIO</span>
-  <span class="icons">(0) ○</span>
+  <span class="icons">○</span>
 </header>
 <main>
   <!-- HERO -->
@@ -137,6 +149,26 @@
       <a class="link" href="#">Explorar Música</a>
     </div>
   </section>
+
+  <!-- Parcerias -->
+  <section>
+    <p class="eyebrow">Parcerias</p>
+    <div class="marquee"><div class="marquee-track">
+      <div class="marquee-group"><span>Artistas</span><span>•</span><span>Podcasters</span><span>•</span><span>Marcas</span><span>•</span><span>Rádios</span><span>•</span><span>Produtoras</span><span>•</span></div>
+      <div class="marquee-group"><span>Artistas</span><span>•</span><span>Podcasters</span><span>•</span><span>Marcas</span><span>•</span><span>Rádios</span><span>•</span><span>Produtoras</span><span>•</span></div>
+    </div></div>
+  </section>
 </main>
+
+<script>
+(function () {
+  var sections = document.querySelectorAll('main section');
+  sections.forEach(function (s) { s.classList.add('reveal'); });
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  sections.forEach(function (s) { io.observe(s); });
+})();
+</script>
 </body>
 </html>
