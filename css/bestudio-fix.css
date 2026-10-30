@@ -8,8 +8,8 @@ html,
 body,
 main,
 .content-for-layout {
-  background: linear-gradient(180deg, #0b0a09 0%, #171009 32%, #261710 55%, #150e0a 78%, #0b0a09 100%) !important;
-  background-color: #0b0a09 !important;
+  background: linear-gradient(180deg, #0b0f0e 0%, #0e1413 32%, #1a1610 55%, #121614 78%, #0b0f0e 100%) !important;
+  background-color: #0b0f0e !important;
   color: #f5efe6 !important;
 }
 
@@ -62,7 +62,7 @@ main,
 
 /* Hero: foto inteira, sem zoom nem cortes, texto branco com sombra */
 .agnes-hero__media {
-  background: #0b0a09 !important;
+  background: #0b0f0e !important;
 }
 .agnes-hero__image,
 .agnes-hero__video,
@@ -73,7 +73,7 @@ main,
   width: 100% !important;
   height: auto !important;
   max-height: 78vh !important;
-  background: #0b0a09 !important;
+  background: #0b0f0e !important;
 }
 .agnes-hero__content,
 .agnes-hero__eyebrow,
@@ -109,7 +109,7 @@ video {
   width: 100% !important;
   height: auto !important;
   max-height: 66vh !important;
-  background: #0b0a09 !important;
+  background: #0b0f0e !important;
   border: 1px solid rgba(216, 178, 140, 0.35) !important;
   border-radius: 14px !important;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55) !important;
@@ -140,7 +140,7 @@ video {
 .agnes-worlds__card {
   margin-bottom: 2.4rem !important;
   padding-bottom: 1.6rem !important;
-  background: #1a130e !important;
+  background: #141a18 !important;
   border: 1px solid rgba(216, 178, 140, 0.22) !important;
   border-radius: 14px !important;
   overflow: hidden !important;
@@ -200,14 +200,14 @@ video {
 .agnes-header--overlay.is-solid,
 .agnes-header.is-open,
 .agnes-header--overlay.is-open {
-  background-color: #0b0a09 !important;
+  background-color: #0b0f0e !important;
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
   color: #f5efe6 !important;
 }
 .agnes-header__drawer,
 .agnes-header__currency-menu {
-  background: #14100d !important;
+  background: #121614 !important;
 }
 .agnes-header__currency-option,
 .agnes-header__nav a,
@@ -292,8 +292,8 @@ video {
    geral de texto claro tornava-os ilegíveis. Passam a fundo preto
    fosco, para o texto claro ficar legível, como no resto do site. */
 .agnes-editorial__content--boxed {
-  background: #1a130e !important;
-  background-color: #1a130e !important;
+  background: #141a18 !important;
+  background-color: #141a18 !important;
   border-color: rgba(216, 178, 140, 0.5) !important;
   color: #f5efe6 !important;
 }
@@ -307,8 +307,8 @@ video {
   color: #d8c9b8 !important;
 }
 .agnes-spinner__root {
-  background: #0b0a09 !important;
-  background-color: #0b0a09 !important;
+  background: #0b0f0e !important;
+  background-color: #0b0f0e !important;
   color: #f5efe6 !important;
 }
 .agnes-spinner__text,
@@ -319,4 +319,46 @@ video {
 .agnes-spinner__stat-num,
 .agnes-spinner__stat-label {
   color: #f5efe6 !important;
+}
+
+/* Ronda 5 — fotos fixas, sem trocar.
+   Cada apresentação de fotos fica só com a primeira foto, fixa.
+   Nada de apresentações a trocar de foto, nada de segunda foto
+   nos cartões, nada de galeria a andar. As fotos da dona não mudam. */
+.agnes-collection__slide:not(:first-child),
+.agnes-editorial__slide:not(:first-child) {
+  display: none !important;
+}
+.agnes-collection__card-image--secondary {
+  display: none !important;
+}
+.agnes-instagram__track {
+  animation: none !important;
+}
+.agnes-instagram__marquee {
+  overflow: visible !important;
+}
+.agnes-instagram__track {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 1.6rem !important;
+}
+.agnes-instagram__cell {
+  flex: 1 1 22% !important;
+  max-width: 24% !important;
+  margin: 0 !important;
+}
+.agnes-instagram__cell[aria-hidden="true"] {
+  display: none !important;
+}
+
+@media screen and (max-width: 749px) {
+  .agnes-instagram__track {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+  .agnes-instagram__cell {
+    flex: none !important;
+    max-width: 100% !important;
+  }
 }
