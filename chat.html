@@ -6,13 +6,16 @@
 var s = window.bestudio.session();
 if (!s) { document.getElementById("wrap").innerHTML = "<h1>Chat</h1><p>Entra na tua conta para falar com o estúdio.</p><p><a class='btn' href='conta.html'>Entrar / Criar conta</a></p>"; }
 else {
-  document.getElementById("wrap").innerHTML = '<h1 style="text-align:left">Chat • BESTUDIO</h1><p style="text-align:left">' + s.email + '</p><div class="msgs" id="msgs"></div><div class="chatbar"><input id="text" placeholder="Escreve a tua mensagem..."><button class="btn btn-primary" id="send" style="margin:0">Enviar</button></div><p><a href="conta.html">Voltar à conta</a></p>';
+  document.getElementById("wrap").innerHTML = '<div class="chathead"><div><strong>BESTUDIO</strong><small>Estúdio • Maputo</small></div><span>' + s.email + '</span></div><div class="msgs" id="msgs"></div><div class="chatbar"><input id="text" placeholder="Escreve a tua mensagem..."><button class="btn btn-primary" id="send" style="margin:0">Enviar</button></div><p style="text-align:center"><a href="conta.html">Voltar à conta</a></p>';
   function render() {
     var all = window.bestudio.messages().filter(function (m) { return m.email === s.email || m.to === s.email; });
-    document.getElementById("msgs").innerHTML = all.length ? all.map(function (m) { return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : "Tu") + '</small>' + m.text + '</div>'; }).join("") : '<p style="text-align:left">Ainda não há mensagens. Conta-nos a tua ideia, o serviço e a data que queres.</p>';
+    function hh(at) { try { var d = new Date(at); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); } catch (e) { return ""; } }
+    document.getElementById("msgs").innerHTML = all.length ? all.map(function (m) { return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : "Tu") + '</small>' + m.text + '<span class="mtime">' + hh(m.at) + '</span></div>'; }).join("") : '<div class="msg studio"><small>BESTUDIO</small>Olá! Conta-nos a tua ideia, o serviço e a data que queres.<span class="mtime"></span></div>';
     var box = document.getElementById("msgs"); box.scrollTop = box.scrollHeight;
   }
-  document.getElementById("send").onclick = function () { var t = document.getElementById("text").value.trim(); if (!t) return; window.bestudio.addMessage({ email: s.email, from: "me", text: t }); document.getElementById("text").value = ""; render(); };
+  function sendMsg() { var t = document.getElementById("text").value.trim(); if (!t) return; window.bestudio.addMessage({ email: s.email, from: "me", text: t }); document.getElementById("text").value = ""; render(); }
+  document.getElementById("send").onclick = sendMsg;
+  document.getElementById("text").addEventListener("keydown", function (e) { if (e.key === "Enter") sendMsg(); });
   render();
 }
 </script></body></html>
