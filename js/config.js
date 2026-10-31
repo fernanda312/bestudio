@@ -5,11 +5,10 @@
 // Com SUPABASE_URL + chave pública, a mesma conta/reserva/chat passam
 // a viver na base de dados. NUNCA pôr aqui a chave secreta (service_role).
 window.BESTUDIO_CONFIG = {
-  SUPABASE_URL: "",
-  SUPABASE_ANON_KEY: "",
-  // Email do admin. Vazio = o dono define-o na página Admin (só local,
-  // até pôr aqui o email definitivo para produção).
-  ADMIN_EMAIL: "",
+  SUPABASE_URL: "https://jtaxmzjtbffrbyyeykxzz.supabase.co",
+  SUPABASE_ANON_KEY: "", // <-- a dona envia a chave pública (publishable) em Settings > API, para eu completar a ligação
+  // Email do admin, indicado pela dona em 2026-10-31.
+  ADMIN_EMAIL: "yociha9742@stosan.com",
   // Taxa de reserva para segurar a sessão. Conta para o pagamento final,
   // não é um custo extra. O resto paga-se no estúdio / na entrega.
   BOOKING_FEE: 1000,
