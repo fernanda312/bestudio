@@ -40,3 +40,6 @@ label{display:block;text-align:left;margin:1.2rem 0 .35rem;color:#c8a86b;font-si
 .chatpage .attachpreview{padding:.6rem 1rem;background:#f5f5f4;border-top:1px solid #e5e5e5;font-size:.9rem;color:#111;display:flex;justify-content:space-between;gap:1rem;align-items:center}
 .chatpage h1{color:#111}
 .chatpage .btn{color:#111;border-color:#111}
+
+body{display:flex;flex-direction:column;min-height:100dvh}main{flex:1}.sitefooter{border-top:1px solid rgba(200,168,107,.22);padding:1.6rem;text-align:center;color:#b8ad9c;font-size:.85rem;letter-spacing:.12em}.sitefooter a{color:#b8ad9c;text-decoration:none;margin:0 .6rem}
+.chatpage{display:block}.chatpage main{flex:none}
