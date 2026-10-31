@@ -1,8 +1,10 @@
-<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reservar | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reservar | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script><script src="js/supabase.js"></script></head><body>
 <header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">Conta</a></header>
 <div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a></div></div>
 <main><p class="eyebrow">Reserva • Maputo</p><h1>Reservar sessão</h1><div id="box"></div></main>
 <script>
+window.BS.ready().then(function () {
+window.BS.recordPageView("reserva.html");
 var q = new URLSearchParams(location.search);
 var s = window.bestudio.service(q.get("service"));
 if (!s) { document.getElementById("box").innerHTML = "<p>Escolhe primeiro um serviço.</p><p><a class='btn' href='servicos.html'>Ver serviços</a></p>"; }
@@ -32,12 +34,16 @@ else {
       window.bestudio.setPending({ next: location.href, service: s.id, qty: qty, date: date, time: time, project: document.getElementById("project").value, notes: document.getElementById("notes").value, phone: document.getElementById("phone").value });
       location.href = "conta.html"; return;
     }
-    var b = window.bestudio.addBooking({ service: s.id, serviceName: s.name, qty: qty, total: total, fee: fee, rest: total - fee, date: date, time: time, project: document.getElementById("project").value, notes: document.getElementById("notes").value, phone: document.getElementById("phone").value, email: window.bestudio.session().email, payment: window.bestudio.supabaseConfigured() ? "por ligar ao fornecedor" : "a aguardar ligação do pagamento" });
-    location.href = "conta.html?booked=" + b.id;
+    var payload = { service: s.id, serviceName: s.name, qty: qty, total: total, fee: fee, rest: total - fee, date: date, time: time, project: document.getElementById("project").value, notes: document.getElementById("notes").value, phone: document.getElementById("phone").value, email: window.bestudio.session().email, payment: "a aguardar", payment_status: "a aguardar" };
+    var done = function (rb) { location.href = "conta.html?booked=" + rb.id; };
+    var fail = function (e) { document.getElementById("msg").textContent = (e && e.message) || "Não consegui guardar a reserva."; };
+    if (window.BS.configured()) { window.BS.addBooking(payload).then(done).catch(fail); }
+    else { try { done(window.bestudio.addBooking(payload)); } catch (e) { fail(e); } }
   };
   // Se voltou da conta com reserva pendente, repõe os campos.
   var p = window.bestudio.pending();
   if (p && p.service === s.id) { document.getElementById("date").value = p.date || ""; document.getElementById("time").value = p.time || ""; document.getElementById("project").value = p.project || ""; document.getElementById("notes").value = p.notes || ""; document.getElementById("phone").value = p.phone || ""; window.bestudio.clearPending(); }
   else if (p) { window.bestudio.clearPending(); }
 }
+});
 </script><footer class="sitefooter">BESTUDIO • Maputo<br><a href="servicos.html">Serviços</a><a href="conta.html">Minha conta</a><a href="chat.html">Chat</a></footer></body></html>
