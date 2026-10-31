@@ -1,25 +1,31 @@
-// BESTUDIO — base local ponto a ponto.
-// Sem Supabase ligado, conta, reservas e chat vivem neste dispositivo
-// (localStorage), para o fluxo funcionar de ponta a ponta em demonstração.
-// Com Supabase ligado (js/config.js), o mesmo fluxo deve passar para a
-// base de dados — essa ligação é o passo da dona, com o projeto e as
-// chaves Zumbo, e não é fingida aqui.
+// BESTUDIO — base local ponto a ponto, com ligação à base de dados
+// quando js/config.js tem URL + chave pública (ver js/supabase.js).
+// Sem essa ligação, conta, reservas e chat vivem neste dispositivo
+// (localStorage), para o fluxo funcionar de ponta a ponta.
 (function () {
   var LS = window.localStorage;
   function read(k, d) { try { var v = LS.getItem(k); return v ? JSON.parse(v) : d; } catch (e) { return d; } }
   function write(k, v) { LS.setItem(k, JSON.stringify(v)); }
   function cfg() { return window.BESTUDIO_CONFIG || {}; }
   function services() {
+    if (window.BS && window.BS.servicesFromRemote && window.BS.servicesFromRemote()) {
+      var remote = window.BS.servicesCache();
+      if (remote && remote.length) return remote;
+    }
     var over = read("bestudio_services_override", null);
     var base = window.BESTUDIO_SERVICES || [];
     if (!over) return base;
+    if (Array.isArray(over)) return over;
     return base.map(function (s) { return over[s.id] ? Object.assign({}, s, over[s.id]) : s; });
   }
   function service(id) { return services().filter(function (s) { return s.id === id; })[0]; }
   function session() { return read("bestudio_session", null); }
   function setSession(s) { write("bestudio_session", s); }
   function adminEmail() { return cfg().ADMIN_EMAIL || read("bestudio_admin_email", "") || ""; }
-  function whatsappUrl() { return read("bestudio_whatsapp_url", "") || cfg().WHATSAPP_URL || "https://wa.me/"; }
+  function whatsappUrl() {
+    if (window.BS && window.BS.whatsappValue && window.BS.whatsappValue()) return window.BS.whatsappValue();
+    return read("bestudio_whatsapp_url", "") || cfg().WHATSAPP_URL || "https://wa.me/";
+  }
   function isAdmin() { var s = session(); return !!(s && adminEmail() && s.email === adminEmail()); }
   function hash(pw) {
     // Hash simples para o modo local (não é segurança de produção;
@@ -64,7 +70,10 @@
   function addMessage(m) {
     var all = messages(); m.at = new Date().toISOString(); all.push(m); write("bestudio_messages", all); return m;
   }
-  function fee() { var o = read("bestudio_booking_fee", null); if (o != null) return o; return (cfg().BOOKING_FEE != null ? cfg().BOOKING_FEE : 1000); }
+  function fee() {
+    if (window.BS && window.BS.feeValue && window.BS.feeValue() != null) return window.BS.feeValue();
+    var o = read("bestudio_booking_fee", null); if (o != null) return o; return (cfg().BOOKING_FEE != null ? cfg().BOOKING_FEE : 1000);
+  }
   window.bestudio = {
     cfg: cfg, services: services, service: service, session: session, setSession: setSession, whatsappUrl: whatsappUrl,
     adminEmail: adminEmail, isAdmin: isAdmin, register: register, login: login, logout: logout,
@@ -73,5 +82,4 @@
     messages: messages, addMessage: addMessage, fee: fee,
     supabaseConfigured: function () { return !!(cfg().SUPABASE_URL && cfg().SUPABASE_ANON_KEY); }
   };
-
 })();
