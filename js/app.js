@@ -19,6 +19,7 @@
   function session() { return read("bestudio_session", null); }
   function setSession(s) { write("bestudio_session", s); }
   function adminEmail() { return cfg().ADMIN_EMAIL || read("bestudio_admin_email", "") || ""; }
+  function whatsappUrl() { return read("bestudio_whatsapp_url", "") || cfg().WHATSAPP_URL || "https://wa.me/"; }
   function isAdmin() { var s = session(); return !!(s && adminEmail() && s.email === adminEmail()); }
   function hash(pw) {
     // Hash simples para o modo local (não é segurança de produção;
@@ -65,7 +66,7 @@
   }
   function fee() { return (cfg().BOOKING_FEE != null ? cfg().BOOKING_FEE : 1000); }
   window.bestudio = {
-    cfg: cfg, services: services, service: service, session: session, setSession: setSession,
+    cfg: cfg, services: services, service: service, session: session, setSession: setSession, whatsappUrl: whatsappUrl,
     adminEmail: adminEmail, isAdmin: isAdmin, register: register, login: login, logout: logout,
     pending: pending, setPending: setPending, clearPending: clearPending, requireAccount: requireAccount,
     bookings: bookings, myBookings: myBookings, addBooking: addBooking, updateBooking: updateBooking,

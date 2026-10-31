@@ -13,6 +13,7 @@ window.BESTUDIO_CONFIG = {
   // não é um custo extra. O resto paga-se no estúdio / na entrega.
   BOOKING_FEE: 1000,
   // WhatsApp do estúdio, formato https://wa.me/258XXXXXXXXX
-  // Vazio = botão WhatsApp fica indisponível até o dono o pôr aqui.
+  // Pode ser substituído depois aqui ou no Admin (o Admin sobrepõe-se).
+  // Enquanto não for substituído, o botão abre o WhatsApp em geral.
   WHATSAPP_URL: ""
 };
