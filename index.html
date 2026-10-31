@@ -24,18 +24,14 @@
   p { text-align: center; color: #f5efe6; margin: .8rem 0; }
   .hero img { max-height: 78vh; }
   .hero .eyebrow { margin-top: 1.6rem; }
-  .swatches { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.6rem; flex-wrap: wrap; }
-  .swatches img { width: 4.8rem; height: 4.8rem; object-fit: cover; border-radius: 50%; border: 2px solid rgba(216,201,184,.4); }
-  .swatches img.selected { border: 3px solid #ffffff; }
-  .service-name { text-align: center; margin-bottom: 1.6rem; }
   .btn { display: inline-block; border: 1px solid #f5efe6; padding: .9rem 2.2rem; letter-spacing: .18em; text-transform: uppercase; text-decoration: none; margin-top: 1.6rem; }
   .btn-center { text-align: center; }
-  .card { background: #141a18; border: 1px solid rgba(216,178,140,.35); border-radius: 14px; overflow: hidden; margin-bottom: 2.4rem; padding-bottom: 2rem; }
-  .card p { padding: 0 1.6rem; }
+  .card { background: transparent; border: none; border-radius: 14px; overflow: hidden; margin-bottom: 2.4rem; padding-bottom: 2rem; }
+  .card p { padding: 0; }
   .card .link { display: block; text-align: center; text-decoration: underline; text-underline-offset: 4px; margin-top: 1.2rem; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
   .grid img { border-radius: 14px; border: 1px solid rgba(216,178,140,.3); }
-  .panel { background: #141a18; border: 6px solid rgba(216,178,140,.5); padding: 3rem 2rem; text-align: center; margin-bottom: 3.2rem; }
+  .panel { background: #141a18; border: 1px solid rgba(200,168,107,.35); padding: 3rem 2rem; text-align: center; margin-bottom: 3.2rem; }
   .panel h2 { margin-bottom: 1.6rem; }
   .panel p { margin-bottom: 1rem; }
   .step { display: flex; gap: 1.6rem; align-items: flex-start; margin-bottom: 2.4rem; text-align: left; }
@@ -61,9 +57,9 @@
 <header>
   <button class="menu" style="background:none;border:none;color:#f5efe6;cursor:pointer" onclick="document.getElementById('drawer').classList.add('open')">≡</button>
   <span class="logo">BESTUDIO</span>
-  <a class="icons" href="conta.html" style="text-decoration:none">○</a>
+  <a class="icons" href="conta.html" style="text-decoration:none">Conta</a>
 </header>
-<div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#0b0f0e;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a><a href="admin.html" style="display:block;padding:.9rem 0;text-decoration:none;font-size:1.2rem">Admin</a></div></div>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#0b0f0e;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a></div></div>
 <style>.drawer.open{display:block !important}</style>
 <main>
   <!-- HERO -->
@@ -75,19 +71,10 @@
 
   <!-- 1. Gravado, Misturado, Pronto -->
   <section>
-    <div class="swatches">
-      <img src="images/escuta.jpg" alt="Ouvir a mistura no estúdio BESTUDIO, em Maputo">
-      <img src="images/microfone.jpg" alt="Microfone de estúdio no BESTUDIO, em Maputo">
-      <img class="selected" src="images/cabine-podcast.jpg" alt="Cabine de podcast no BESTUDIO, em Maputo">
-      <img src="images/podcast-mulher.jpg" alt="Gravação de podcast no BESTUDIO, em Maputo">
-      <img src="images/sala-guitarras.jpg" alt="Sala de gravação com guitarras no BESTUDIO, em Maputo">
-      <img src="images/sala-mistura.jpg" alt="Sala de mistura do estúdio BESTUDIO, em Maputo">
-    </div>
-    <p class="service-name">Gravação de Banda</p>
     <video muted loop autoplay playsinline preload="metadata" src="videos/video-shoot.mp4"></video>
     <p class="eyebrow" style="margin-top:2rem;">Um olhar mais perto</p>
     <h2>Gravado, Misturado, Pronto</h2>
-    <p class="btn-center"><a class="btn" href="servico.html?id=banda">Ver serviço</a></p>
+    <p class="btn-center"><a href="servico.html?id=banda" style="color:#c8a86b;text-decoration:none">Ver serviço →</a></p>
   </section>
 
   <!-- 2. Podcast & Publicidade -->
@@ -133,8 +120,8 @@
   <section>
     <div class="panel">
       <h2>Um som feito só para ti.</h2>
-      <p>O BESTUDIO aceita um número limitado de sessões por semana, para cada projeto ter o tempo que merece. Trabalha diretamente com a nossa equipa — a tua visão, o teu som, a tua história — gravados e misturados a singular object that belongs entirely to you.</p>
-      <p class="btn-center"><a class="btn" href="servicos.html">Begin a Commission</a></p>
+      <p>Um número limitado de sessões por semana, para cada projeto ter o tempo que merece. A tua visão, o teu som, a tua história — gravados e misturados só para ti.</p>
+      <p class="btn-center"><a class="btn" href="servicos.html">Começar um projeto</a></p>
     </div>
     <a href="chat.html" style="text-decoration:none"><div class="step"><span class="num">I</span><div><h3>Conversa</h3><p>Conversa privada sobre a tua visão, o teu som e o teu projeto</p></div></div></a>
     <a href="servicos.html" style="text-decoration:none"><div class="step"><span class="num">II</span><div><h3>Conceito</h3><p>Definimos o som, o arranjo e o formato únicos para ti</p></div></div></a>
@@ -155,12 +142,9 @@
   <!-- Parcerias -->
   <section>
     <p class="eyebrow">Parcerias</p>
-    <div class="marquee"><div class="marquee-track">
-      <div class="marquee-group"><span>Artistas</span><span>•</span><span>Podcasters</span><span>•</span><span>Marcas</span><span>•</span><span>Rádios</span><span>•</span><span>Produtoras</span><span>•</span></div>
-      <div class="marquee-group"><span>Artistas</span><span>•</span><span>Podcasters</span><span>•</span><span>Marcas</span><span>•</span><span>Rádios</span><span>•</span><span>Produtoras</span><span>•</span></div>
-    </div></div>
+    <p style="text-align:center;letter-spacing:.22em;text-transform:uppercase;font-size:.8rem;color:#c8a86b">Artistas · Podcasters · Marcas · Rádios · Produtoras</p>
   </section>
-<section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a> • <a href="admin.html">Admin</a></p><p>BESTUDIO • Maputo</p></section></main>
+<section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a></p><p>BESTUDIO • Maputo</p></section></main>
 
 <script>
 (function () {
