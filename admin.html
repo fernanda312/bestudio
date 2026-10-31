@@ -1,42 +1,340 @@
-<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script><script src="js/supabase.js"></script></head><body>
 <header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">Conta</a></header>
 <div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a></div></div>
 <main><p class="eyebrow">BESTUDIO • Maputo</p><h1>Admin</h1><div id="box"></div></main>
 <script>
-var s = window.bestudio.session();
-var admin = window.bestudio.adminEmail();
-if (!s) { document.getElementById("box").innerHTML = "<p>Entra primeiro na tua conta.</p><p><a class='btn btn-primary' href='conta.html'>Entrar</a></p>"; }
-else if (!admin) {
-  document.getElementById("box").innerHTML = '<label>Email do admin</label><input id="ae" type="email"><p><button class="btn btn-primary" id="set">Definir admin</button></p>';
-  document.getElementById("set").onclick = function () { var e = document.getElementById("ae").value.trim(); if (!e) return; localStorage.setItem("bestudio_admin_email", JSON.stringify(e)); location.reload(); };
-}
-else if (!window.bestudio.isAdmin()) { document.getElementById("box").innerHTML = "<p>Esta página é só para o admin.</p><p><a class='linkarrow' href='conta.html'>Minha conta</a></p>"; }
-else {
-  function renderBookings() {
-    document.getElementById("blist").innerHTML = window.bestudio.bookings().length ? window.bestudio.bookings().map(function (b) {
-      return '<div class="booking"><div class="price-row"><p><strong>' + b.serviceName + '</strong></p><span class="badge">' + b.status + '</span></div><p class="muted">' + b.date + ' às ' + b.time + ' • ' + b.email + '</p><p>Projeto: ' + (b.project || "—") + ' • Total: ' + fmtMT(b.total) + ' • Taxa: ' + fmtMT(b.fee) + '</p><p><button class="smallbtn" onclick="window.bestudio.updateBooking(\'' + b.id + '\',{status:\'confirmada\'});location.reload()">Confirmar</button> <button class="smallbtn" onclick="window.bestudio.updateBooking(\'' + b.id + '\',{status:\'paga\'});location.reload()">Marcar como paga</button> <button class="smallbtn danger" onclick="window.bestudio.updateBooking(\'' + b.id + '\',{status:\'cancelada\'});location.reload()">Cancelar</button></p></div>';
-    }).join("") : "<p class='muted'>Ainda não há reservas.</p>";
+window.BS.ready().then(async function () {
+  var remote = window.BS.configured();
+  var email = null;
+  if (remote) { try { email = await window.BS.sessionEmail(); } catch (e) {} }
+  if (!email) { var ls = window.bestudio.session(); email = ls ? ls.email : null; }
+  var box = document.getElementById("box");
+  if (!email) { box.innerHTML = "<p>Entra primeiro na tua conta.</p><p><a class='btn btn-primary' href='conta.html'>Entrar</a></p>"; return; }
+  var admin = await window.BS.isAdmin(email);
+  if (!admin) {
+    box.innerHTML = "<p>Sem acesso.</p><p><button class='btn' id='out'>Sair da conta</button></p>";
+    document.getElementById("out").onclick = async function () { await window.BS.logout(); location.href = "conta.html"; };
+    return;
   }
+  var settings = window.BS.settings() || {};
+  var ident = settings.identity || {};
+  var hero = settings.hero || {};
+  var home = settings.home || {};
+  var contact = settings.contact || {};
+  var waSetting = settings.whatsapp || {};
+  var feeSetting = settings.fee || {};
+  var services = window.bestudio.services().slice();
+  if (window.BS.servicesFromRemote && window.BS.servicesFromRemote()) { var rc = window.BS.servicesCache(); if (rc && rc.length) services = rc.slice(); }
+
+  box.innerHTML =
+    '<p class="muted">' + email + '</p>' +
+    '<nav class="adminnav"><a href="#identidade">Identidade</a><a href="#hero">Hero</a><a href="#inicio">Página inicial</a><a href="#servicos">Serviços</a><a href="#reservas">Reservas</a><a href="#clientes">Clientes</a><a href="#visitantes">Visitantes</a><a href="#chat">Chat</a><a href="#definicoes">Definições</a></nav>' +
+    '<section class="adminsection" id="identidade"><h2>Identidade</h2>' +
+    '<label>Nome do estúdio</label><input id="idName" value="' + (ident.name || "BESTUDIO") + '">' +
+    '<label>Logótipo — escolher ficheiro</label><input type="file" id="idLogoFile" accept="image/*"><div class="preview" id="idLogoPreview">' + (ident.logo ? '<img src="' + ident.logo + '" alt="Logótipo">' : "") + '</div>' +
+    '<p><button class="btn" id="idLogoRemove">Remover logótipo</button> <button class="btn btn-primary" id="idSave">Guardar identidade</button> <span id="idMsg" class="muted"></span></p></section>' +
+    '<section class="adminsection" id="hero"><h2>Hero</h2>' +
+    '<label>Imagem ou vídeo — escolher ficheiro</label><input type="file" id="heroFile" accept="image/*,video/*"><div class="preview" id="heroPreview">' + (hero.media && hero.media.url ? (hero.media.type === "video" ? '<video controls src="' + hero.media.url + '"></video>' : '<img src="' + hero.media.url + '" alt="Hero">') : "") + '</div>' +
+    '<label>Título</label><input id="heroTitle" value="' + (hero.title || "") + '">' +
+    '<label>Texto</label><textarea id="heroText">' + (hero.text || "") + '</textarea>' +
+    '<label>Texto do botão</label><input id="heroBtnLabel" value="' + (hero.buttonLabel || "") + '">' +
+    '<label>Destino do botão</label><select id="heroBtnPage"><option value="servicos.html">Serviços</option><option value="conta.html">Minha conta</option><option value="chat.html">Chat</option><option value="index.html">Início</option></select>' +
+    '<p><button class="btn btn-primary" id="heroSave">Guardar hero</button> <span id="heroMsg" class="muted"></span></p></section>' +
+    '<section class="adminsection" id="inicio"><h2>Página inicial</h2>' +
+    '<h3>Um olhar mais perto</h3><label>Imagem ou vídeo — escolher ficheiro</label><input type="file" id="lookFile" accept="image/*,video/*"><div class="preview" id="lookPreview"></div>' +
+    '<label>Título</label><input id="lookTitle" value="' + ((home.look && home.look.title) || "") + '"><label>Texto</label><textarea id="lookText">' + ((home.look && home.look.text) || "") + '</textarea>' +
+    '<h3>Serviços em destaque</h3><label>Título</label><input id="featTitle" value="' + ((home.featured && home.featured.title) || "") + '"><label>Texto</label><textarea id="featText">' + ((home.featured && home.featured.text) || "") + '</textarea>' +
+    '<h3>A voz do estúdio</h3><label>Imagem — escolher ficheiro</label><input type="file" id="voiceFile" accept="image/*"><div class="preview" id="voicePreview"></div>' +
+    '<label>Título</label><input id="voiceTitle" value="' + ((home.voice && home.voice.title) || "") + '"><label>Texto</label><textarea id="voiceText">' + ((home.voice && home.voice.text) || "") + '</textarea>' +
+    '<h3>Processo — 4 passos</h3><label>Título</label><input id="procTitle" value="' + ((home.process && home.process.title) || "") + '"><label>Texto</label><textarea id="procText">' + ((home.process && home.process.text) || "") + '</textarea>' +
+    '<label>Passo 1</label><input id="step1" value="' + (((home.process && home.process.steps) || [])[0] || "") + '">' +
+    '<label>Passo 2</label><input id="step2" value="' + (((home.process && home.process.steps) || [])[1] || "") + '">' +
+    '<label>Passo 3</label><input id="step3" value="' + (((home.process && home.process.steps) || [])[2] || "") + '">' +
+    '<label>Passo 4</label><input id="step4" value="' + (((home.process && home.process.steps) || [])[3] || "") + '">' +
+    '<h3>Parcerias</h3><label>Texto</label><input id="partnersText" value="' + ((home.partners && home.partners.text) || "") + '">' +
+    '<h3>Rodapé</h3><label>Texto</label><input id="footerText" value="' + ((home.footer && home.footer.text) || "") + '">' +
+    '<p><button class="btn btn-primary" id="homeSave">Guardar página inicial</button> <span id="homeMsg" class="muted"></span></p></section>' +
+    '<section class="adminsection" id="servicos"><h2>Serviços</h2><div id="svcList"></div>' +
+    '<h3>Adicionar / editar serviço</h3>' +
+    '<label>Nome</label><input id="svcName"><label>Categoria</label><select id="svcCat"><option value="musica">Música</option><option value="podcast">Podcast</option><option value="publicidade">Publicidade</option></select>' +
+    '<label>Unidade</label><input id="svcUnit" placeholder="hora, música, episódio, sessão, mês, serviço"><label>Preço (MT)</label><input id="svcPrice" type="number">' +
+    '<label>Descrição</label><textarea id="svcDesc"></textarea>' +
+    '<label>Imagem — escolher ficheiro</label><input type="file" id="svcImgFile" accept="image/*"><div class="preview" id="svcPreview"></div>' +
+    '<p><button class="btn" id="svcNew">Novo serviço</button> <button class="btn btn-primary" id="svcSave">Guardar serviço</button> <span id="svcMsg" class="muted"></span></p></section>' +
+    '<section class="adminsection" id="reservas"><h2>Reservas</h2><div class="filterbar" id="bkFilters">' +
+    '<button data-filter="all" class="on">Todas</button><button data-filter="a aguardar pagamento">Por confirmar</button><button data-filter="confirmada">Confirmadas</button><button data-filter="paga">Pagas</button><button data-filter="cancelada">Canceladas</button></div>' +
+    '<div id="bkList"></div><p id="bkMsg" class="muted"></p></section>' +
+    '<section class="adminsection" id="clientes"><h2>Clientes</h2><div id="clientList"></div></section>' +
+    '<section class="adminsection" id="visitantes"><h2>Visitantes</h2><div id="visCounts"></div><div id="visRecent"></div></section>' +
+    '<section class="adminsection" id="chat"><h2>Chat</h2><div id="chatConvList"></div><div id="chatMsgs"></div>' +
+    '<label>Resposta</label><textarea id="chatReplyText"></textarea>' +
+    '<label>Anexo — escolher ficheiro (máximo 5 MB)</label><input type="file" id="chatFile" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"><div class="preview" id="chatPreview"></div>' +
+    '<p><button class="btn" id="chatMic">🎤 Gravar áudio</button> <button class="btn btn-primary" id="chatSend">Enviar resposta</button> <span id="chatMsg" class="muted"></span></p></section>' +
+    '<section class="adminsection" id="definicoes"><h2>Definições</h2>' +
+    '<label>Taxa de reserva (MT)</label><input id="setFee" type="number" value="' + (feeSetting.value != null ? feeSetting.value : window.bestudio.fee()) + '">' +
+    '<label>WhatsApp</label><input id="setWa" value="' + (waSetting.url || window.bestudio.whatsappUrl()) + '">' +
+    '<label>Email de contacto</label><input id="setEmail" type="email" value="' + (contact.email || "") + '">' +
+    '<label>Telefone</label><input id="setPhone" value="' + (contact.phone || "") + '">' +
+    '<label>Morada</label><input id="setAddress" value="' + (contact.address || "") + '">' +
+    '<p><button class="btn btn-primary" id="setSave">Guardar definições</button> <span id="setMsg" class="muted"></span></p></section>' +
+    '<p><button class="smallbtn" id="out2">Sair da conta</button></p>';
+  document.getElementById("out2").onclick = async function () { await window.BS.logout(); location.href = "conta.html"; };
+
+  var files = {};
+  function previewFile(inputId, previewId, key) {
+    document.getElementById(inputId).addEventListener("change", function () {
+      var f = this.files[0]; if (!f) return;
+      if (f.size > 10 * 1024 * 1024) { alert("Ficheiro demasiado grande. Máximo 10 MB."); this.value = ""; return; }
+      files[key] = f;
+      var url = URL.createObjectURL(f);
+      var pv = document.getElementById(previewId);
+      if (f.type.indexOf("video/") === 0) pv.innerHTML = '<video controls src="' + url + '"></video>';
+      else if (f.type.indexOf("image/") === 0) pv.innerHTML = '<img src="' + url + '" alt="Ficheiro escolhido">';
+      else pv.innerHTML = "<p>" + f.name + "</p>";
+    });
+  }
+  previewFile("idLogoFile", "idLogoPreview", "logo");
+  previewFile("heroFile", "heroPreview", "hero");
+  previewFile("lookFile", "lookPreview", "look");
+  previewFile("voiceFile", "voicePreview", "voice");
+  previewFile("svcImgFile", "svcPreview", "svc");
+  async function mediaFor(key, existing) {
+    var f = files[key];
+    if (!f) return existing || null;
+    if (remote) {
+      var url = await window.BS.uploadMedia(f);
+      return { url: url, type: f.type.indexOf("video/") === 0 ? "video" : "image" };
+    }
+    var data = await new Promise(function (resolve, reject) {
+      var r = new FileReader();
+      r.onload = function () { resolve(r.result); };
+      r.onerror = function () { reject(new Error("Não consegui ler o ficheiro.")); };
+      r.readAsDataURL(f);
+    });
+    return { url: data, type: f.type.indexOf("video/") === 0 ? "video" : "image" };
+  }
+  function val(id) { var el = document.getElementById(id); return el ? el.value.trim() : ""; }
+  document.getElementById("idLogoRemove").onclick = function () { files.logo = null; document.getElementById("idLogoFile").value = ""; document.getElementById("idLogoPreview").innerHTML = ""; ident.logo = ""; };
+  document.getElementById("idSave").onclick = async function () {
+    var msg = document.getElementById("idMsg"); msg.textContent = "A guardar...";
+    try {
+      var logo = ident.logo || "";
+      if (files.logo) { var m = await mediaFor("logo", null); logo = m.url; }
+      await window.BS.saveSetting("identity", { name: val("idName") || "BESTUDIO", logo: logo });
+      msg.textContent = "Guardado.";
+    } catch (e) { msg.textContent = e.message || "Não consegui guardar."; }
+  };
+  document.getElementById("heroSave").onclick = async function () {
+    var msg = document.getElementById("heroMsg"); msg.textContent = "A guardar...";
+    try {
+      var media = await mediaFor("hero", hero.media || null);
+      await window.BS.saveSetting("hero", { media: media, title: val("heroTitle"), text: val("heroText"), buttonLabel: val("heroBtnLabel"), buttonPage: val("heroBtnPage") });
+      msg.textContent = "Guardado.";
+    } catch (e) { msg.textContent = e.message || "Não consegui guardar."; }
+  };
+  document.getElementById("homeSave").onclick = async function () {
+    var msg = document.getElementById("homeMsg"); msg.textContent = "A guardar...";
+    try {
+      var lookMedia = await mediaFor("look", (home.look && home.look.media) || null);
+      var voiceMedia = await mediaFor("voice", (home.voice && home.voice.media) || null);
+      await window.BS.saveSetting("home", {
+        look: { media: lookMedia, title: val("lookTitle"), text: val("lookText") },
+        featured: { title: val("featTitle"), text: val("featText") },
+        voice: { media: voiceMedia, title: val("voiceTitle"), text: val("voiceText") },
+        process: { title: val("procTitle"), text: val("procText"), steps: [val("step1"), val("step2"), val("step3"), val("step4")] },
+        partners: { text: val("partnersText") },
+        footer: { text: val("footerText") }
+      });
+      msg.textContent = "Guardado.";
+    } catch (e) { msg.textContent = e.message || "Não consegui guardar."; }
+  };
+  document.getElementById("setSave").onclick = async function () {
+    var msg = document.getElementById("setMsg"); msg.textContent = "A guardar...";
+    try {
+      var fee = parseInt(val("setFee")) || 0;
+      await window.BS.saveSetting("fee", { value: fee });
+      await window.BS.saveSetting("whatsapp", { url: val("setWa") });
+      await window.BS.saveSetting("contact", { email: val("setEmail"), phone: val("setPhone"), address: val("setAddress") });
+      if (!remote) {
+        try { localStorage.setItem("bestudio_booking_fee", JSON.stringify(fee)); localStorage.setItem("bestudio_whatsapp_url", JSON.stringify(val("setWa"))); } catch (e) {}
+      }
+      msg.textContent = "Guardado.";
+    } catch (e) { msg.textContent = e.message || "Não consegui guardar."; }
+  };
+
+  var editingSvc = null;
   function renderServices() {
-    document.getElementById("slist").innerHTML = window.bestudio.services().map(function (sv) {
-      return '<div class="pricerow"><div><strong>' + sv.name + '</strong><p class="muted" style="margin:0">' + window.BESTUDIO_CATS[sv.cat] + '</p></div><input type="number" id="p-' + sv.id + '" value="' + sv.price + '"></div>';
-    }).join("");
+    document.getElementById("svcList").innerHTML = services.length ? services.map(function (sv) {
+      return '<div class="admincard"><p><strong>' + sv.name + '</strong> — ' + fmtMT(sv.price) + ' / ' + sv.unit + '</p><p class="muted">' + (window.BESTUDIO_CATS[sv.cat] || sv.cat) + ' • ' + (sv.desc || "") + '</p>' +
+        '<p><button class="smallbtn" data-edit="' + sv.id + '">Editar</button> <button class="smallbtn danger" data-del="' + sv.id + '">Apagar</button></p></div>';
+    }).join("") : "<p class='muted'>Ainda não há serviços.</p>";
+    document.querySelectorAll("[data-edit]").forEach(function (b) {
+      b.onclick = function () {
+        var sv = services.filter(function (x) { return x.id === b.getAttribute("data-edit"); })[0];
+        if (!sv) return;
+        editingSvc = sv.id;
+        document.getElementById("svcName").value = sv.name; document.getElementById("svcCat").value = sv.cat; document.getElementById("svcUnit").value = sv.unit;
+        document.getElementById("svcPrice").value = sv.price; document.getElementById("svcDesc").value = sv.desc || "";
+        document.getElementById("svcPreview").innerHTML = sv.img ? '<img src="' + sv.img + '" alt="' + sv.name + '">' : "";
+      };
+    });
+    document.querySelectorAll("[data-del]").forEach(function (b) {
+      b.onclick = async function () {
+        if (!confirm("Apagar este serviço?")) return;
+        services = services.filter(function (x) { return x.id !== b.getAttribute("data-del"); });
+        try { await window.BS.saveServices(services); renderServices(); } catch (e) { document.getElementById("svcMsg").textContent = e.message || "Não consegui apagar."; }
+      };
+    });
   }
-  function saveAllPrices() {
-    var over = {}; try { over = JSON.parse(localStorage.getItem("bestudio_services_override") || "{}"); } catch (e) {}
-    window.bestudio.services().forEach(function (sv) { over[sv.id] = { price: parseInt(document.getElementById("p-" + sv.id).value) || 0 }; });
-    localStorage.setItem("bestudio_services_override", JSON.stringify(over)); document.getElementById("pricesaved").textContent = "Preços guardados.";
+  document.getElementById("svcNew").onclick = function () {
+    editingSvc = null;
+    ["svcName", "svcUnit", "svcPrice", "svcDesc"].forEach(function (id) { document.getElementById(id).value = ""; });
+    document.getElementById("svcPreview").innerHTML = "";
+    document.getElementById("svcImgFile").value = "";
+  };
+  document.getElementById("svcSave").onclick = async function () {
+    var msg = document.getElementById("svcMsg"); msg.textContent = "A guardar...";
+    try {
+      var name = val("svcName"); if (!name) { msg.textContent = "Escreve o nome do serviço."; return; }
+      var existing = editingSvc ? services.filter(function (x) { return x.id === editingSvc; })[0] : null;
+      var img = existing ? existing.img : "";
+      if (files.svc) { var m = await mediaFor("svc", null); img = m.url; }
+      var rec = { id: editingSvc || ("svc-" + Date.now()), name: name, cat: val("svcCat"), unit: val("svcUnit"), price: parseInt(val("svcPrice")) || 0, desc: val("svcDesc"), img: img };
+      if (existing) { services = services.map(function (x) { return x.id === rec.id ? rec : x; }); }
+      else { services.push(rec); }
+      await window.BS.saveServices(services);
+      editingSvc = null; renderServices(); msg.textContent = "Guardado.";
+    } catch (e) { msg.textContent = e.message || "Não consegui guardar."; }
+  };
+  renderServices();
+
+  var bkFilter = "all";
+  async function renderBookings() {
+    var list = [];
+    try { list = await window.BS.listBookings(); } catch (e) { document.getElementById("bkMsg").textContent = e.message || "Não consegui carregar as reservas."; return; }
+    var shown = bkFilter === "all" ? list : list.filter(function (b) { return b.status === bkFilter; });
+    document.getElementById("bkList").innerHTML = shown.length ? shown.map(function (b) {
+      return '<div class="admincard"><div class="price-row"><p><strong>' + b.serviceName + '</strong></p><span class="badge">' + b.status + '</span></div>' +
+        '<p class="muted">' + b.date + ' às ' + b.time + ' • ' + b.email + '</p>' +
+        '<p>Projeto: ' + (b.project || "—") + ' • Total: ' + fmtMT(b.total) + ' • Taxa: ' + fmtMT(b.fee) + ' • Pagamento: ' + (b.payment_status || b.payment || "a aguardar") + '</p>' +
+        '<p><button class="smallbtn" data-bk="confirmada" data-id="' + b.id + '">Confirmar</button> <button class="smallbtn" data-bk="paga" data-id="' + b.id + '">Marcar como paga</button> <button class="smallbtn" data-bk="pagamento" data-id="' + b.id + '">Marcar pagamento</button> <button class="smallbtn danger" data-bk="cancelada" data-id="' + b.id + '">Cancelar</button></p></div>';
+    }).join("") : "<p class='muted'>Ainda não há reservas neste filtro.</p>";
+    document.querySelectorAll("[data-bk]").forEach(function (b) {
+      b.onclick = async function () {
+        var action = b.getAttribute("data-bk"); var id = b.getAttribute("data-id");
+        try {
+          if (action === "pagamento") await window.BS.updateBooking(id, { payment_status: "paga" });
+          else if (action === "paga") await window.BS.updateBooking(id, { status: "paga", payment_status: "paga" });
+          else await window.BS.updateBooking(id, { status: action });
+          renderBookings();
+        } catch (e) { document.getElementById("bkMsg").textContent = e.message || "Não consegui atualizar a reserva."; }
+      };
+    });
   }
-  document.getElementById("box").innerHTML =
-    '<p class="muted">' + s.email + '</p>' +
-    '<h2>Taxa de reserva</h2><label>Taxa (MT)</label><input type="number" id="fee" value="' + window.bestudio.fee() + '"><p><button class="btn" id="savefee">Guardar taxa</button> <span id="feesaved" class="muted"></span></p>' +
-    '<h2>WhatsApp</h2><label>Link do WhatsApp</label><input id="wa" value="' + window.bestudio.whatsappUrl() + '"><p><button class="btn" id="savewa">Guardar link</button> <span id="wasaved" class="muted"></span></p>' +
-    '<h2>Reservas</h2><div id="blist"></div><h2>Preços</h2><div id="slist"></div><p><button class="btn" id="saveprices">Guardar preços</button> <span id="pricesaved" class="muted"></span></p>' +
-    '<h2>Responder no chat</h2><label>Email do cliente</label><input id="to" placeholder="email do cliente"><label>Mensagem</label><textarea id="rtext"></textarea><p><button class="btn btn-primary" id="reply">Enviar resposta</button> <span id="replysaved" class="muted"></span></p>';
-  document.getElementById("savefee").onclick = function () { var v = parseInt(document.getElementById("fee").value) || 0; localStorage.setItem("bestudio_booking_fee", JSON.stringify(v)); document.getElementById("feesaved").textContent = "Guardada."; };
-  document.getElementById("savewa").onclick = function () { var v = document.getElementById("wa").value.trim(); if (!v) return; localStorage.setItem("bestudio_whatsapp_url", JSON.stringify(v)); document.getElementById("wasaved").textContent = "Guardado."; };
-  document.getElementById("saveprices").onclick = saveAllPrices;
-  document.getElementById("reply").onclick = function () { var to = document.getElementById("to").value.trim(), t = document.getElementById("rtext").value.trim(); if (!to || !t) return; window.bestudio.addMessage({ email: to, to: to, from: "studio", text: t }); document.getElementById("rtext").value = ""; document.getElementById("replysaved").textContent = "Enviada."; };
-  renderBookings(); renderServices();
-}
+  document.querySelectorAll("#bkFilters button").forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll("#bkFilters button").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on"); bkFilter = b.getAttribute("data-filter"); renderBookings();
+    };
+  });
+  renderBookings();
+
+  window.BS.listClients().then(function (clients) {
+    document.getElementById("clientList").innerHTML = clients.length ? clients.map(function (c) {
+      return '<div class="admincard"><p><strong>' + c.email + '</strong> — ' + c.bookings.length + ' reserva(s)</p>' +
+        c.bookings.map(function (b) { return '<p class="muted">' + b.serviceName + ' • ' + b.date + ' às ' + b.time + ' • ' + b.status + ' • ' + fmtMT(b.total) + '</p>'; }).join("") + '</div>';
+    }).join("") : "<p class='muted'>Ainda não há clientes.</p>";
+  }).catch(function (e) { document.getElementById("clientList").innerHTML = "<p class='err'>" + (e.message || "Não consegui carregar os clientes.") + "</p>"; });
+
+  window.BS.visitorStats().then(function (stats) {
+    var counts = stats.counts || {};
+    document.getElementById("visCounts").innerHTML = Object.keys(counts).length ? Object.keys(counts).map(function (p) { return '<div class="row"><p>' + p + '</p><p>' + counts[p] + ' visita(s)</p></div>'; }).join("") : "<p class='muted'>Ainda não há visitas registadas.</p>";
+    document.getElementById("visRecent").innerHTML = (stats.recent || []).length ? "<h3>Visitas recentes</h3>" + stats.recent.map(function (v) { return '<p class="muted">' + v.path + ' • ' + (v.created_at || v.at || "") + '</p>'; }).join("") : "";
+  }).catch(function (e) { document.getElementById("visCounts").innerHTML = "<p class='err'>" + (e.message || "Não consegui carregar os visitantes.") + "</p>"; });
+
+  var chatEmail = null, chatConvId = null, chatFile = null, chatRecorder = null, chatChunks = [], chatRecording = false;
+  function renderChatConvs(list) {
+    document.getElementById("chatConvList").innerHTML = list.length ? list.map(function (c) {
+      return '<p><button class="smallbtn" data-conv="' + (c.email || "") + '" data-convid="' + (c.id || "") + '">' + (c.email || "") + '</button></p>';
+    }).join("") : "<p class='muted'>Ainda não há conversas.</p>";
+    document.querySelectorAll("[data-conv]").forEach(function (b) {
+      b.onclick = async function () {
+        chatEmail = b.getAttribute("data-conv"); chatConvId = b.getAttribute("data-convid") || null;
+        await renderChatMsgs();
+      };
+    });
+  }
+  async function renderChatMsgs() {
+    if (!chatEmail) { document.getElementById("chatMsgs").innerHTML = "<p class='muted'>Escolhe um cliente para ver a conversa.</p>"; return; }
+    var msgs = [];
+    try {
+      if (remote && chatConvId) msgs = await window.BS.conversationMessages(chatConvId, chatEmail);
+      else msgs = window.bestudio.messages().filter(function (m) { return m.email === chatEmail || m.to === chatEmail; });
+    } catch (e) { msgs = []; }
+    document.getElementById("chatMsgs").innerHTML = msgs.length ? msgs.map(function (m) {
+      var att = "";
+      if (m.fileData) {
+        if ((m.fileType || "").indexOf("image/") === 0) att = '<img src="' + m.fileData + '" style="max-width:100%;border-radius:10px">';
+        else if ((m.fileType || "").indexOf("video/") === 0) att = '<video controls src="' + m.fileData + '" style="max-width:100%"></video>';
+        else if ((m.fileType || "").indexOf("audio/") === 0) att = '<audio controls src="' + m.fileData + '" style="width:100%"></audio>';
+        else att = '<p><a href="' + m.fileData + '" download="' + (m.fileName || "ficheiro") + '">' + (m.fileName || "Ficheiro") + '</a></p>';
+      }
+      return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : chatEmail) + '</small>' + (m.text || "") + att + '</div>';
+    }).join("") : "<p class='muted'>Ainda não há mensagens com este cliente.</p>";
+  }
+  window.BS.listConversations().then(renderChatConvs).catch(function () { renderChatConvs([]); });
+  renderChatMsgs();
+  document.getElementById("chatFile").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { alert("Ficheiro demasiado grande. Máximo 5 MB."); this.value = ""; return; }
+    chatFile = f;
+    var url = URL.createObjectURL(f);
+    document.getElementById("chatPreview").innerHTML = f.type.indexOf("image/") === 0 ? '<img src="' + url + '" alt="Anexo">' : "<p>" + f.name + "</p>";
+  });
+  document.getElementById("chatMic").onclick = async function () {
+    var btn = document.getElementById("chatMic");
+    if (chatRecording) { chatRecorder.stop(); return; }
+    try {
+      var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chatChunks = []; chatRecorder = new MediaRecorder(stream);
+      chatRecorder.ondataavailable = function (e) { if (e.data.size) chatChunks.push(e.data); };
+      chatRecorder.onstop = async function () {
+        chatRecording = false; btn.textContent = "🎤 Gravar áudio";
+        stream.getTracks().forEach(function (tr) { tr.stop(); });
+        var blob = new Blob(chatChunks, { type: chatRecorder.mimeType || "audio/webm" });
+        if (!chatEmail) { alert("Escolhe primeiro um cliente."); return; }
+        try {
+          var att = null;
+          if (remote) { var url = await window.BS.uploadChatFile(new File([blob], "audio.webm", { type: blob.type })); att = { url: url, type: blob.type, name: "Áudio" }; }
+          else {
+            var data = await new Promise(function (resolve) { var r = new FileReader(); r.onload = function () { resolve(r.result); }; r.readAsDataURL(blob); });
+            att = { url: data, type: blob.type, name: "Áudio" };
+          }
+          await window.BS.sendRemoteMessage(chatConvId, chatEmail, "", att);
+          renderChatMsgs();
+        } catch (e) { document.getElementById("chatMsg").textContent = e.message || "Não consegui enviar o áudio."; }
+      };
+      chatRecorder.start(); chatRecording = true; btn.textContent = "⏹ Parar";
+    } catch (e) { alert("Não consegui aceder ao microfone. Verifica a permissão do navegador."); }
+  };
+  document.getElementById("chatSend").onclick = async function () {
+    if (!chatEmail) { document.getElementById("chatMsg").textContent = "Escolhe primeiro um cliente."; return; }
+    var text = val("chatReplyText");
+    if (!text && !chatFile) return;
+    try {
+      var att = null;
+      if (chatFile) {
+        if (remote) { var url = await window.BS.uploadChatFile(chatFile); att = { url: url, type: chatFile.type, name: chatFile.name }; }
+        else {
+          var data = await new Promise(function (resolve) { var r = new FileReader(); r.onload = function () { resolve(r.result); }; r.readAsDataURL(chatFile); });
+          att = { url: data, type: chatFile.type, name: chatFile.name };
+        }
+      }
+      await window.BS.sendRemoteMessage(chatConvId, chatEmail, text, att);
+      document.getElementById("chatReplyText").value = ""; document.getElementById("chatFile").value = ""; document.getElementById("chatPreview").innerHTML = ""; chatFile = null;
+      document.getElementById("chatMsg").textContent = "Enviada.";
+      renderChatMsgs();
+    } catch (e) { document.getElementById("chatMsg").textContent = e.message || "Não consegui enviar."; }
+  };
+});
 </script><footer class="sitefooter">BESTUDIO • Maputo<br><a href="servicos.html">Serviços</a><a href="conta.html">Minha conta</a><a href="chat.html">Chat</a></footer></body></html>

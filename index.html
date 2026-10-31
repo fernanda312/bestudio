@@ -7,10 +7,10 @@
 <meta name="description" content="Estúdio de gravação em Maputo: música, podcast, publicidade e vídeo, com som profissional.">
 <style>
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #202126; color: #f5efe6; }
+  html, body { margin: 0; padding: 0; background: #202126; color: #f2ede3; }
   body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.5; }
   img, video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; background: #202126; transform: none; }
-  a { color: #f5efe6; }
+  a { color: #f2ede3; }
   header { position: sticky; top: 0; z-index: 10; background: #202126; border-bottom: 1px solid rgba(216,201,184,.25); display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.6rem; }
   header .menu, header .icons { font-size: 1.6rem; letter-spacing: .1em; white-space: nowrap; }
   header .logo { font-size: 1.1rem; letter-spacing: .32em; text-align: center; font-weight: 600; }
@@ -21,10 +21,10 @@
   h1 { font-size: clamp(2.8rem, 12vw, 5rem); text-align: center; }
   h2 { font-size: clamp(2.4rem, 10vw, 4rem); text-align: center; margin-bottom: 1.2rem; }
   h3 { font-size: 2.2rem; text-align: center; margin: 1.6rem 0 .8rem; }
-  p { text-align: center; color: #f5efe6; margin: .8rem 0; }
+  p { text-align: center; color: #f2ede3; margin: .8rem 0; }
   .hero img { max-height: 78vh; }
   .hero .eyebrow { margin-top: 1.6rem; }
-  .btn { display: inline-block; border: 1px solid #f5efe6; padding: .9rem 2.2rem; letter-spacing: .18em; text-transform: uppercase; text-decoration: none; margin-top: 1.6rem; }
+  .btn { display: inline-block; border: 1px solid #f2ede3; padding: .9rem 2.2rem; letter-spacing: .18em; text-transform: uppercase; text-decoration: none; margin-top: 1.6rem; }
   .btn-center { text-align: center; }
   .card { background: transparent; border: none; border-radius: 14px; overflow: hidden; margin-bottom: 2.4rem; padding-bottom: 2rem; }
   .card p { padding: 0; }
@@ -40,12 +40,13 @@
   .step p { text-align: left; margin: 0; color: #d8c9b8; }
   video { border-radius: 14px; border: 1px solid rgba(216,178,140,.35); }
 
+  video { border-radius: 14px; border: 1px solid rgba(216,178,140,.35); }
 </style>
 </head>
 <body>
 <header>
-  <button class="menu" style="background:none;border:none;color:#f5efe6;cursor:pointer" onclick="document.getElementById('drawer').classList.add('open')">≡</button>
-  <span class="logo">BESTUDIO</span>
+  <button class="menu" style="background:none;border:none;color:#f2ede3;cursor:pointer" onclick="document.getElementById('drawer').classList.add('open')">≡</button>
+  <span class="logo" id="siteLogoText">BESTUDIO</span>
   <a class="icons" href="conta.html" style="text-decoration:none">Conta</a>
 </header>
 <div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#202126;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a></div></div>
@@ -53,16 +54,19 @@
 <main>
   <!-- HERO -->
   <section class="hero">
-    <img src="images/hero-bestudio.jpg" alt="BESTUDIO — estúdio de gravação em Maputo">
-    <p class="eyebrow">BESTUDIO • Maputo</p>
-    <h1>O som, na sua melhor forma.</h1>
+    <span id="heroMediaWrap"><img id="heroMedia" src="images/hero-bestudio.jpg" alt="BESTUDIO — estúdio de gravação em Maputo"></span>
+    <p class="eyebrow" id="heroEyebrow">BESTUDIO • Maputo</p>
+    <h1 id="heroTitle">O som, na sua melhor forma.</h1>
+    <p id="heroText" style="display:none"></p>
+    <p class="btn-center" id="heroBtnWrap" style="display:none"><a class="btn" id="heroBtn" href="servicos.html">Começar um projeto</a></p>
   </section>
 
   <!-- 1. Gravado, Misturado, Pronto -->
   <section>
-    <video muted loop autoplay playsinline preload="metadata" src="videos/video-shoot.mp4"></video>
-    <p class="eyebrow" style="margin-top:2rem;">Um olhar mais perto</p>
-    <h2>Gravado, Misturado, Pronto</h2>
+    <span id="lookMediaWrap"><video id="lookMedia" muted loop autoplay playsinline preload="metadata" src="videos/video-shoot.mp4"></video></span>
+    <p class="eyebrow" style="margin-top:2rem;" id="lookEyebrow">Um olhar mais perto</p>
+    <h2 id="lookTitle">Gravado, Misturado, Pronto</h2>
+    <p id="lookText" style="display:none"></p>
     <p class="btn-center"><a href="servico.html?id=banda" style="color:#c8a86b;text-decoration:none">Ver serviço →</a></p>
   </section>
 
@@ -84,9 +88,10 @@
 
   <!-- 3. A VOZ BESTUDIO -->
   <section>
-    <img src="images/podcast-mulher.jpg" alt="Gravação de podcast no BESTUDIO, em Maputo">
-    <h2 style="margin-top:2rem;">O bom som ouve-se nos detalhes.</h2>
-    <p class="eyebrow">A VOZ BESTUDIO</p>
+    <img id="voiceMedia" src="images/podcast-mulher.jpg" alt="Gravação de podcast no BESTUDIO, em Maputo">
+    <h2 style="margin-top:2rem;" id="voiceTitle">O bom som ouve-se nos detalhes.</h2>
+    <p class="eyebrow" id="voiceEyebrow">A VOZ BESTUDIO</p>
+    <p id="voiceText" style="display:none"></p>
   </section>
 
   <!-- 4. Grelha de fotos -->
@@ -108,8 +113,8 @@
   <!-- 5. Um som feito só para ti -->
   <section>
     <div class="panel">
-      <h2>Um som feito só para ti.</h2>
-      <p>Um número limitado de sessões por semana, para cada projeto ter o tempo que merece. A tua visão, o teu som, a tua história — gravados e misturados só para ti.</p>
+      <h2 id="featuredTitle">Um som feito só para ti.</h2>
+      <p id="featuredText">Um número limitado de sessões por semana, para cada projeto ter o tempo que merece. A tua visão, o teu som, a tua história — gravados e misturados só para ti.</p>
       <p class="btn-center"><a class="btn" href="servicos.html">Começar um projeto</a></p>
     </div>
     <a href="chat.html" style="text-decoration:none"><div class="step"><span class="num">I</span><div><h3>Conversa</h3><p>Conversa privada sobre a tua visão, o teu som e o teu projeto</p></div></div></a>
@@ -131,11 +136,46 @@
   <!-- Parcerias -->
   <section>
     <p class="eyebrow">Parcerias</p>
-    <p style="text-align:center;letter-spacing:.22em;text-transform:uppercase;font-size:.8rem;color:#c8a86b">Artistas · Podcasters · Marcas · Rádios · Produtoras</p>
+    <p id="partnersText" style="text-align:center;letter-spacing:.22em;text-transform:uppercase;font-size:.8rem;color:#c8a86b">Artistas · Podcasters · Marcas · Rádios · Produtoras</p>
   </section>
-<section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a></p><p>BESTUDIO • Maputo</p></section></main>
+<section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a></p><p id="footerText">BESTUDIO • Maputo</p></section></main>
 
-
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/services.js"></script>
+<script src="js/app.js"></script>
+<script src="js/supabase.js"></script>
+<script>
+window.BS.ready().then(function () {
+  window.BS.recordPageView("index.html");
+  var s = window.BS.settings();
+  function setText(id, v) { var el = document.getElementById(id); if (el && v) { el.textContent = v; el.style.display = ""; } }
+  function setMedia(wrapId, mediaId, media) {
+    if (!media || !media.url) return;
+    var wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    if (media.type === "video") { wrap.innerHTML = '<video id="' + mediaId + '" muted loop autoplay playsinline preload="metadata" src="' + media.url + '"></video>'; }
+    else { wrap.innerHTML = '<img id="' + mediaId + '" src="' + media.url + '" alt="BESTUDIO — estúdio de gravação em Maputo">'; }
+  }
+  var ident = s.identity || {};
+  if (ident.name) { setText("siteLogoText", ident.name); setText("footerText", ident.name + " • Maputo"); setText("heroEyebrow", ident.name + " • Maputo"); }
+  if (ident.logo) {
+    var logo = document.getElementById("siteLogoText");
+    if (logo) { logo.innerHTML = '<img src="' + ident.logo + '" alt="BESTUDIO" style="max-height:2.2rem;width:auto;object-fit:contain">'; }
+  }
+  var hero = s.hero || {};
+  setMedia("heroMediaWrap", "heroMedia", hero.media);
+  setText("heroTitle", hero.title);
+  setText("heroText", hero.text);
+  if (hero.buttonLabel) { var b = document.getElementById("heroBtn"); if (b) { b.textContent = hero.buttonLabel; document.getElementById("heroBtnWrap").style.display = ""; } }
+  if (hero.buttonPage) { var b2 = document.getElementById("heroBtn"); if (b2) b2.href = hero.buttonPage; }
+  var home = s.home || {};
+  if (home.look) { setMedia("lookMediaWrap", "lookMedia", home.look.media); setText("lookTitle", home.look.title); setText("lookText", home.look.text); }
+  if (home.featured) { setText("featuredTitle", home.featured.title); setText("featuredText", home.featured.text); }
+  if (home.voice) { if (home.voice.media && home.voice.media.url) { var vm = document.getElementById("voiceMedia"); if (vm) vm.src = home.voice.media.url; } setText("voiceTitle", home.voice.title); setText("voiceText", home.voice.text); }
+  if (home.partners && home.partners.text) setText("partnersText", home.partners.text);
+  if (home.footer && home.footer.text) setText("footerText", home.footer.text);
+});
+</script>
 </body>
 </html>

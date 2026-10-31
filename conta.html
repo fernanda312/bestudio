@@ -1,36 +1,68 @@
-<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Minha conta | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Minha conta | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.42.0/dist/umd/supabase.min.js"></script><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script><script src="js/supabase.js"></script></head><body>
 <header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">Conta</a></header>
 <div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a></div></div>
 <main><p class="eyebrow">BESTUDIO • Maputo</p><h1>Minha conta</h1><div id="box"></div></main>
 <script>
-var s = window.bestudio.session();
-if (!s) {
-  document.getElementById("box").innerHTML =
-    '<div class="account-card"><label>Email</label><input id="email" type="email"><label>Palavra-passe</label><input id="pw" type="password"><p id="msg"></p>' +
-    '<p><button class="btn btn-primary" id="login">Entrar</button></p><p><button class="btn" id="create">Criar conta</button></p></div>';
-  document.getElementById("create").onclick = function () { var r = window.bestudio.register(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
-  document.getElementById("login").onclick = function () { var r = window.bestudio.login(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
-  function afterLogin() {
-    var p = window.bestudio.pending();
-    // NÃO limpar aqui: a reserva pendente só é limpa pela página da reserva,
-    // depois de repor data, hora, projeto, notas e M-Pesa. Limpar aqui era
-    // o que fazia os campos voltarem vazios após criar a conta.
-    if (p && p.next) { location.href = p.next; return; }
-    location.reload();
+window.BS.ready().then(async function () {
+  window.BS.recordPageView("conta.html");
+  var remote = window.BS.configured();
+  var email = null;
+  if (remote) { try { email = await window.BS.sessionEmail(); } catch (e) { email = null; } }
+  if (!email) { var ls = window.bestudio.session(); email = ls ? ls.email : null; }
+  if (!email) {
+    document.getElementById("box").innerHTML =
+      '<div class="account-card"><label>Email</label><input id="email" type="email"><label>Palavra-passe</label><input id="pw" type="password"><p id="msg"></p>' +
+      '<p><button class="btn btn-primary" id="login">Entrar</button></p><p><button class="btn" id="create">Criar conta</button></p></div>';
+    document.getElementById("create").onclick = async function () {
+      var r = await window.BS.register(document.getElementById("email").value.trim(), document.getElementById("pw").value);
+      if (!r.ok) { document.getElementById("msg").textContent = r.err; return; }
+      afterLogin();
+    };
+    document.getElementById("login").onclick = async function () {
+      var r = await window.BS.login(document.getElementById("email").value.trim(), document.getElementById("pw").value);
+      if (!r.ok) { document.getElementById("msg").textContent = r.err; return; }
+      afterLogin();
+    };
+    function afterLogin() {
+      var p = window.bestudio.pending();
+      if (p && p.next) { location.href = p.next; return; }
+      location.reload();
+    }
+    return;
   }
-} else {
+  var s = { email: email };
   var booked = new URLSearchParams(location.search).get("booked");
-  var list = window.bestudio.myBookings();
+  var list = [];
+  try { list = remote ? await window.BS.myBookings(email) : window.bestudio.myBookings(); }
+  catch (e) { list = window.bestudio.myBookings(); }
   document.getElementById("box").innerHTML =
     (booked ? '<div class="note"><p><strong>Reserva guardada.</strong> A aguardar a taxa de reserva. O estúdio confirma a data e responde no chat.</p></div>' : "") +
     '<div class="account-card"><p class="account-email"><strong>' + s.email + '</strong></p>' +
-    '<p><a class="btn btn-primary" href="chat.html">Chat com o estúdio</a></p><p><a class="linkarrow" href="servicos.html">Reservar outro serviço</a></p></div>' +
+    '<p><a class="btn btn-primary" href="chat.html">Chat com o estúdio</a></p><p><a class="linkarrow" href="servicos.html">Reservar outro serviço</a></p>' +
+    '<div class="account-actions"><button class="smallbtn" id="out">Sair da conta</button><span id="adminline"></span></div></div>' +
     '<div class="account-card"><h2>Minhas reservas</h2>' +
     (list.length ? list.map(function (b) {
-      return '<div class="booking"><p><strong>' + b.serviceName + '</strong> — ' + b.date + ' às ' + b.time + '</p><p>Projeto: ' + (b.project || "—") + '</p><p>Total: ' + fmtMT(b.total) + ' • Taxa: ' + fmtMT(b.fee) + ' • Estado: ' + b.status + '</p></div>';
-    }).join("") : "<p class=\"muted\">Ainda não tens reservas.</p>") + '</div>' +
-    '<div class="account-actions"><button class="smallbtn" id="out">Sair da conta</button>' +
-    (window.bestudio.isAdmin() ? '<a class="linkarrow" href="admin.html">Admin</a>' : "") + '</div>';
-  document.getElementById("out").onclick = function () { window.bestudio.logout(); location.reload(); };
-}
+      var pay = "";
+      if (remote && b.id && String(b.id).indexOf("B") !== 0 && (b.payment_status === "a aguardar" || b.payment === "a aguardar")) {
+        pay = '<p><button class="smallbtn" data-pay="' + b.id + '">Pagar taxa por M-Pesa</button> <span class="muted" data-paymsg="' + b.id + '"></span></p>';
+      }
+      return '<div class="booking"><p><strong>' + b.serviceName + '</strong> — ' + b.date + ' às ' + b.time + '</p><p>Projeto: ' + (b.project || "—") + '</p><p>Total: ' + fmtMT(b.total) + ' • Taxa: ' + fmtMT(b.fee) + ' • Estado: ' + b.status + ' • Pagamento: ' + (b.payment_status || b.payment || "a aguardar") + '</p>' + pay + '</div>';
+    }).join("") : "<p>Ainda não tens reservas.</p>") + '</div>';
+  document.getElementById("out").onclick = async function () { await window.BS.logout(); location.reload(); };
+  document.querySelectorAll("[data-pay]").forEach(function (btn) {
+    btn.onclick = async function () {
+      var id = btn.getAttribute("data-pay");
+      var msgEl = document.querySelector('[data-paymsg="' + id + '"]');
+      btn.disabled = true;
+      try {
+        var res = await window.BS.payFee(id);
+        if (msgEl) msgEl.textContent = "Confirma o pagamento no teu telemóvel. Quando o pagamento for confirmado, a reserva passa a paga.";
+        if (res && res.payment_url) { location.href = res.payment_url; }
+      } catch (e) { if (msgEl) msgEl.textContent = e.message || "Não consegui iniciar o pagamento."; btn.disabled = false; }
+    };
+  });
+  window.BS.isAdmin(email).then(function (admin) {
+    if (admin) { var el = document.getElementById("adminline"); if (el) el.innerHTML = '<a class="linkarrow" href="admin.html">Admin</a>'; }
+  });
+});
 </script><footer class="sitefooter">BESTUDIO • Maputo<br><a href="servicos.html">Serviços</a><a href="conta.html">Minha conta</a><a href="chat.html">Chat</a></footer></body></html>
