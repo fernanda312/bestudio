@@ -13,7 +13,10 @@ if (!s) {
   document.getElementById("login").onclick = function () { var r = window.bestudio.login(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
   function afterLogin() {
     var p = window.bestudio.pending();
-    if (p && p.next) { var next = p.next; window.bestudio.clearPending(); location.href = next; return; }
+    // NÃO limpar aqui: a reserva pendente só é limpa pela página da reserva,
+    // depois de repor data, hora, projeto, notas e M-Pesa. Limpar aqui era
+    // o que fazia os campos voltarem vazios após criar a conta.
+    if (p && p.next) { location.href = p.next; return; }
     location.reload();
   }
 } else {
