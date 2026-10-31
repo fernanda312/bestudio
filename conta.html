@@ -6,7 +6,6 @@
 var s = window.bestudio.session();
 if (!s) {
   document.getElementById("box").innerHTML =
-    '<div class="note"><p>Sem Supabase ligado, a conta fica só neste dispositivo, para demonstração. Com o projeto ligado, a conta passa a ser real e serve em qualquer dispositivo.</p></div>' +
     '<label>Email</label><input id="email" type="email"><label>Palavra-passe</label><input id="pw" type="password"><p id="msg"></p>' +
     '<p><button class="btn btn-primary" id="create">Criar conta</button> <button class="btn" id="login">Entrar</button></p>';
   document.getElementById("create").onclick = function () { var r = window.bestudio.register(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
