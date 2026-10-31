@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chat | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">○</a></header>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a><a href="admin.html">Admin</a></div></div>
+<main><div class="chatwrap" id="wrap"></div></main>
+<script>
+var s = window.bestudio.session();
+if (!s) { document.getElementById("wrap").innerHTML = "<h1>Chat</h1><p>Entra na tua conta para falar com o estúdio.</p><p><a class='btn' href='conta.html'>Entrar / Criar conta</a></p>"; }
+else {
+  document.getElementById("wrap").innerHTML = '<h1 style="text-align:left">Chat • BESTUDIO</h1><p style="text-align:left">' + s.email + '</p><div class="msgs" id="msgs"></div><div class="chatbar"><input id="text" placeholder="Escreve a tua mensagem..."><button class="btn btn-primary" id="send" style="margin:0">Enviar</button></div><p><a href="conta.html">Voltar à conta</a></p>';
+  function render() {
+    var all = window.bestudio.messages().filter(function (m) { return m.email === s.email || m.to === s.email; });
+    document.getElementById("msgs").innerHTML = all.length ? all.map(function (m) { return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : "Tu") + '</small>' + m.text + '</div>'; }).join("") : '<p style="text-align:left">Ainda não há mensagens. Conta-nos a tua ideia, o serviço e a data que queres.</p>';
+    var box = document.getElementById("msgs"); box.scrollTop = box.scrollHeight;
+  }
+  document.getElementById("send").onclick = function () { var t = document.getElementById("text").value.trim(); if (!t) return; window.bestudio.addMessage({ email: s.email, from: "me", text: t }); document.getElementById("text").value = ""; render(); };
+  render();
+}
+</script></body></html>

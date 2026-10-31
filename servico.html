@@ -1,0 +1,18 @@
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Serviço | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">○</a></header>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="servicos.html?cat=musica">Música</a><a href="servicos.html?cat=podcast">Podcast</a><a href="servicos.html?cat=publicidade">Publicidade</a><a href="conta.html">Minha conta</a><a href="admin.html">Admin</a></div></div>
+<main><div id="detail"></div></main>
+<script>
+var id = new URLSearchParams(location.search).get("id");
+var s = window.bestudio.service(id);
+if (!s) { document.getElementById("detail").innerHTML = "<h1>Serviço não encontrado</h1><p><a class='btn' href='servicos.html'>Ver serviços</a></p>"; }
+else {
+  document.getElementById("detail").innerHTML = '<p class="eyebrow">' + window.BESTUDIO_CATS[s.cat] + ' • Maputo</p><h1>' + s.name + '</h1><div class="card"><img src="' + s.img + '" alt="' + s.name + '"><p>' + s.desc + '</p><p class="price">' + fmtMT(s.price) + " / " + s.unit + '</p></div>' +
+  '<label>Quantidade (' + s.unit + ')</label><input id="qty" type="number" min="1" value="1">' +
+  '<p>Total do serviço: <strong id="total">' + fmtMT(s.price) + '</strong></p>' +
+  '<div class="note"><p>Para segurar a sessão paga-se uma taxa de reserva de <strong>' + fmtMT(window.bestudio.fee()) + '</strong>. A taxa conta para o pagamento final, não é um custo extra. O resto paga-se no estúdio / na entrega.</p></div>' +
+  '<p><button class="btn btn-primary" id="go">Reservar este serviço</button></p><p><a class="btn" href="servicos.html?cat=' + s.cat + '">Ver mais de ' + window.BESTUDIO_CATS[s.cat] + '</a></p>';
+  document.getElementById("qty").oninput = function () { var q = Math.max(1, parseInt(this.value) || 1); document.getElementById("total").textContent = fmtMT(s.price * q); };
+  document.getElementById("go").onclick = function () { var q = Math.max(1, parseInt(document.getElementById("qty").value) || 1); location.href = "reserva.html?service=" + s.id + "&qty=" + q; };
+}
+</script></body></html>

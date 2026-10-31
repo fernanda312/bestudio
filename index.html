@@ -59,10 +59,12 @@
 </head>
 <body>
 <header>
-  <span class="menu">≡</span>
+  <button class="menu" style="background:none;border:none;color:#f5efe6;cursor:pointer" onclick="document.getElementById('drawer').classList.add('open')">≡</button>
   <span class="logo">BESTUDIO</span>
-  <span class="icons">○</span>
+  <a class="icons" href="conta.html" style="text-decoration:none">○</a>
 </header>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#0b0f0e;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a><a href="admin.html" style="display:block;padding:.9rem 0;text-decoration:none;font-size:1.2rem">Admin</a></div></div>
+<style>.drawer.open{display:block !important}</style>
 <main>
   <!-- HERO -->
   <section class="hero">
@@ -85,7 +87,7 @@
     <video muted loop autoplay playsinline preload="metadata" src="videos/video-shoot.mp4"></video>
     <p class="eyebrow" style="margin-top:2rem;">Um olhar mais perto</p>
     <h2>Gravado, Misturado, Pronto</h2>
-    <p class="btn-center"><a class="btn" href="#">Ver serviço</a></p>
+    <p class="btn-center"><a class="btn" href="servico.html?id=banda">Ver serviço</a></p>
   </section>
 
   <!-- 2. Podcast & Publicidade -->
@@ -94,13 +96,13 @@
       <img src="images/cabine-podcast.jpg" alt="Cabine de podcast no BESTUDIO, em Maputo">
       <h3>Podcast</h3>
       <p>Podcasts gravados e editados, com voz limpa e ritmo certo.</p>
-      <a class="link" href="#">Explorar Podcast</a>
+      <a class="link" href="servicos.html?cat=podcast">Explorar Podcast</a>
     </div>
     <div class="card">
       <img src="images/sala-acustica.jpg" alt="Sala acústica do estúdio BESTUDIO, em Maputo">
       <h3>Publicidade</h3>
       <p>Spots, locuções e som para marcas, rádio e digital.</p>
-      <a class="link" href="#">Explorar Publicidade</a>
+      <a class="link" href="servicos.html?cat=publicidade">Explorar Publicidade</a>
     </div>
   </section>
 
@@ -132,12 +134,12 @@
     <div class="panel">
       <h2>Um som feito só para ti.</h2>
       <p>O BESTUDIO aceita um número limitado de sessões por semana, para cada projeto ter o tempo que merece. Trabalha diretamente com a nossa equipa — a tua visão, o teu som, a tua história — gravados e misturados a singular object that belongs entirely to you.</p>
-      <p class="btn-center"><a class="btn" href="#">Begin a Commission</a></p>
+      <p class="btn-center"><a class="btn" href="servicos.html">Begin a Commission</a></p>
     </div>
-    <div class="step"><span class="num">I</span><div><h3>Conversa</h3><p>Conversa privada sobre a tua visão, o teu som e o teu projeto</p></div></div>
-    <div class="step"><span class="num">II</span><div><h3>Conceito</h3><p>Definimos o som, o arranjo e o formato únicos para ti</p></div></div>
-    <div class="step"><span class="num">III</span><div><h3>Gravação</h3><p>Gravado para ti, por inteiro, no estúdio em Maputo</p></div></div>
-    <div class="step"><span class="num">IV</span><div><h3>Entrega</h3><p>Entregue em ficheiro final, pronto a publicar em todas as plataformas</p></div></div>
+    <a href="chat.html" style="text-decoration:none"><div class="step"><span class="num">I</span><div><h3>Conversa</h3><p>Conversa privada sobre a tua visão, o teu som e o teu projeto</p></div></div></a>
+    <a href="servicos.html" style="text-decoration:none"><div class="step"><span class="num">II</span><div><h3>Conceito</h3><p>Definimos o som, o arranjo e o formato únicos para ti</p></div></div></a>
+    <a href="servicos.html" style="text-decoration:none"><div class="step"><span class="num">III</span><div><h3>Gravação</h3><p>Gravado para ti, por inteiro, no estúdio em Maputo</p></div></div></a>
+    <a href="conta.html" style="text-decoration:none"><div class="step"><span class="num">IV</span><div><h3>Entrega</h3><p>Entregue em ficheiro final, pronto a publicar em todas as plataformas</p></div></div></a>
   </section>
 
   <!-- 6. Música -->
@@ -146,7 +148,7 @@
       <img src="images/microfone.jpg" alt="Microfone de estúdio no BESTUDIO, em Maputo">
       <h3>Música</h3>
       <p>Música gravada, produzida e misturada para artistas e bandas.</p>
-      <a class="link" href="#">Explorar Música</a>
+      <a class="link" href="servicos.html?cat=musica">Explorar Música</a>
     </div>
   </section>
 
@@ -158,7 +160,7 @@
       <div class="marquee-group"><span>Artistas</span><span>•</span><span>Podcasters</span><span>•</span><span>Marcas</span><span>•</span><span>Rádios</span><span>•</span><span>Produtoras</span><span>•</span></div>
     </div></div>
   </section>
-</main>
+<section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a> • <a href="admin.html">Admin</a></p><p>BESTUDIO • Maputo</p></section></main>
 
 <script>
 (function () {
