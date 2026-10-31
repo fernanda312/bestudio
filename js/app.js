@@ -64,7 +64,7 @@
   function addMessage(m) {
     var all = messages(); m.at = new Date().toISOString(); all.push(m); write("bestudio_messages", all); return m;
   }
-  function fee() { return (cfg().BOOKING_FEE != null ? cfg().BOOKING_FEE : 1000); }
+  function fee() { var o = read("bestudio_booking_fee", null); if (o != null) return o; return (cfg().BOOKING_FEE != null ? cfg().BOOKING_FEE : 1000); }
   window.bestudio = {
     cfg: cfg, services: services, service: service, session: session, setSession: setSession, whatsappUrl: whatsappUrl,
     adminEmail: adminEmail, isAdmin: isAdmin, register: register, login: login, logout: logout,
