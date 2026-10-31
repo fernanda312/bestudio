@@ -6,8 +6,8 @@
 var s = window.bestudio.session();
 if (!s) {
   document.getElementById("box").innerHTML =
-    '<label>Email</label><input id="email" type="email"><label>Palavra-passe</label><input id="pw" type="password"><p id="msg"></p>' +
-    '<p><button class="btn btn-primary" id="login">Entrar</button></p><p><button class="btn" id="create">Criar conta</button></p>';
+    '<div class="account-card"><label>Email</label><input id="email" type="email"><label>Palavra-passe</label><input id="pw" type="password"><p id="msg"></p>' +
+    '<p><button class="btn btn-primary" id="login">Entrar</button></p><p><button class="btn" id="create">Criar conta</button></p></div>';
   document.getElementById("create").onclick = function () { var r = window.bestudio.register(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
   document.getElementById("login").onclick = function () { var r = window.bestudio.login(document.getElementById("email").value.trim(), document.getElementById("pw").value); if (!r.ok) { document.getElementById("msg").textContent = r.err; return; } afterLogin(); };
   function afterLogin() {
@@ -23,14 +23,14 @@ if (!s) {
   var list = window.bestudio.myBookings();
   document.getElementById("box").innerHTML =
     (booked ? '<div class="note"><p><strong>Reserva guardada.</strong> A aguardar a taxa de reserva. O estúdio confirma a data e responde no chat.</p></div>' : "") +
-    '<p class="muted">' + s.email + '</p>' +
-    '<p><a class="btn btn-primary" href="chat.html">Chat com o estúdio</a></p><p><a class="linkarrow" href="servicos.html">Reservar outro serviço</a></p>' +
-    '<h2>Minhas reservas</h2>' +
+    '<div class="account-card"><p class="account-email"><strong>' + s.email + '</strong></p>' +
+    '<p><a class="btn btn-primary" href="chat.html">Chat com o estúdio</a></p><p><a class="linkarrow" href="servicos.html">Reservar outro serviço</a></p></div>' +
+    '<div class="account-card"><h2>Minhas reservas</h2>' +
     (list.length ? list.map(function (b) {
       return '<div class="booking"><p><strong>' + b.serviceName + '</strong> — ' + b.date + ' às ' + b.time + '</p><p>Projeto: ' + (b.project || "—") + '</p><p>Total: ' + fmtMT(b.total) + ' • Taxa: ' + fmtMT(b.fee) + ' • Estado: ' + b.status + '</p></div>';
-    }).join("") : "<p>Ainda não tens reservas.</p>") +
-    '<p><button class="smallbtn" id="out">Sair da conta</button></p>' +
-    (window.bestudio.isAdmin() ? '<p><a class="linkarrow" href="admin.html">Admin</a></p>' : "");
+    }).join("") : "<p class=\"muted\">Ainda não tens reservas.</p>") + '</div>' +
+    '<div class="account-actions"><button class="smallbtn" id="out">Sair da conta</button>' +
+    (window.bestudio.isAdmin() ? '<a class="linkarrow" href="admin.html">Admin</a>' : "") + '</div>';
   document.getElementById("out").onclick = function () { window.bestudio.logout(); location.reload(); };
 }
 </script><footer class="sitefooter">BESTUDIO • Maputo<br><a href="servicos.html">Serviços</a><a href="conta.html">Minha conta</a><a href="chat.html">Chat</a></footer></body></html>
