@@ -74,23 +74,4 @@
     supabaseConfigured: function () { return !!(cfg().SUPABASE_URL && cfg().SUPABASE_ANON_KEY); }
   };
 
-  function gradientize() {
-    if (document.body.classList.contains("chatpage")) return;
-    var els = [];
-    var logo = document.querySelector("header .logo"); if (logo) els.push(logo);
-    document.querySelectorAll("main h1, main h2").forEach(function (h) { els.push(h); });
-    els.forEach(function (el) {
-      var text = el.textContent; if (!text || el.dataset.gradDone) return; el.dataset.gradDone = "1";
-      var n = text.length; if (n < 2) return;
-      el.innerHTML = text.split("").map(function (ch, i) {
-        var f = n === 1 ? 0 : i / (n - 1);
-        var r = Math.round(255 * (1 - f) + 26 * f);
-        var g = Math.round(43 * (1 - f));
-        var b = Math.round(43 * (1 - f));
-        var esc = ch === " " ? "&nbsp;" : ch;
-        return '<span style="color:rgb(' + r + ',' + g + ',' + b + ');text-shadow:0 0 10px rgba(255,30,30,.25)">' + esc + "</span>";
-      }).join("");
-    });
-  }
-  document.addEventListener("DOMContentLoaded", gradientize);
 })();
