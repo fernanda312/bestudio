@@ -14,4 +14,4 @@ var tabs = document.getElementById("tabs");
 document.getElementById("list").innerHTML = window.bestudio.services().filter(function (s) { return cat === "all" || s.cat === cat; }).map(function (s) {
   return '<div class="card"><a href="servico.html?id=' + s.id + '" style="text-decoration:none"><img src="' + s.img + '" alt="' + s.name + '"></a><div class="price-row"><h3>' + s.name + '</h3><span class="price">' + fmtMT(s.price) + '</span></div><p class="muted">' + window.BESTUDIO_CATS[s.cat] + ' • ' + s.unit + '</p><p>' + s.desc + '</p><a class="linkarrow" href="servico.html?id=' + s.id + '">Reservar</a></div>';
 }).join("");
-</script></body></html>
+</script><footer class="sitefooter">BESTUDIO • Maputo<br><a href="servicos.html">Serviços</a><a href="conta.html">Minha conta</a><a href="chat.html">Chat</a></footer></body></html>
