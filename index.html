@@ -7,11 +7,11 @@
 <meta name="description" content="Estúdio de gravação em Maputo: música, podcast, publicidade e vídeo, com som profissional.">
 <style>
   * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; background: #0b0f0e; color: #f5efe6; }
+  html, body { margin: 0; padding: 0; background: #202126; color: #f5efe6; }
   body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.5; }
-  img, video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; background: #0b0f0e; transform: none; }
+  img, video { display: block; width: 100%; height: auto; object-fit: contain; object-position: center; background: #202126; transform: none; }
   a { color: #f5efe6; }
-  header { position: sticky; top: 0; z-index: 10; background: #0b0f0e; border-bottom: 1px solid rgba(216,201,184,.25); display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.6rem; }
+  header { position: sticky; top: 0; z-index: 10; background: #202126; border-bottom: 1px solid rgba(216,201,184,.25); display: flex; align-items: center; justify-content: space-between; padding: 1.2rem 1.6rem; }
   header .menu, header .icons { font-size: 1.6rem; letter-spacing: .1em; white-space: nowrap; }
   header .logo { font-size: 1.1rem; letter-spacing: .32em; text-align: center; font-weight: 600; }
   main { padding-bottom: 4.8rem; }
@@ -31,7 +31,7 @@
   .card .link { display: block; text-align: center; text-decoration: underline; text-underline-offset: 4px; margin-top: 1.2rem; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6rem; }
   .grid img { border-radius: 14px; border: 1px solid rgba(216,178,140,.3); }
-  .panel { background: #141a18; border: 1px solid rgba(200,168,107,.35); padding: 3rem 2rem; text-align: center; margin-bottom: 3.2rem; }
+  .panel { background: #26272e; border: 1px solid rgba(200,168,107,.35); padding: 3rem 2rem; text-align: center; margin-bottom: 3.2rem; }
   .panel h2 { margin-bottom: 1.6rem; }
   .panel p { margin-bottom: 1rem; }
   .step { display: flex; gap: 1.6rem; align-items: flex-start; margin-bottom: 2.4rem; text-align: left; }
@@ -40,17 +40,6 @@
   .step p { text-align: left; margin: 0; color: #d8c9b8; }
   video { border-radius: 14px; border: 1px solid rgba(216,178,140,.35); }
 
-  /* Transições dinâmicas em cada secção: aparecem a desvanecer e a subir suavemente ao entrar no ecrã */
-  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .8s ease, transform .8s ease; }
-  .reveal.visible { opacity: 1; transform: none; }
-  .card, .panel { transition: transform .4s ease, box-shadow .4s ease; }
-  .card:hover, .panel:hover { transform: translateY(-4px); box-shadow: 0 16px 32px rgba(0,0,0,.5); }
-  /* Parcerias em scroll horizontal automático */
-  .marquee { overflow: hidden; }
-  .marquee-track { display: flex; width: max-content; animation: partners-scroll 24s linear infinite; }
-  .marquee-group { display: flex; gap: 3rem; padding-right: 3rem; }
-  .marquee-group span { font-family: Georgia, "Times New Roman", serif; font-size: 2rem; white-space: nowrap; color: #f5efe6; }
-  @keyframes partners-scroll { to { transform: translateX(-50%); } }
 </style>
 </head>
 <body>
@@ -59,7 +48,7 @@
   <span class="logo">BESTUDIO</span>
   <a class="icons" href="conta.html" style="text-decoration:none">Conta</a>
 </header>
-<div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#0b0f0e;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a></div></div>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')" style="position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;z-index:20"><div class="box" onclick="event.stopPropagation()" style="background:#202126;width:80%;max-width:22rem;height:100%;padding:1.6rem"><a href="index.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Início</a><a href="servicos.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Todos os serviços</a><a href="servicos.html?cat=musica" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Música</a><a href="servicos.html?cat=podcast" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Podcast</a><a href="servicos.html?cat=publicidade" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Publicidade</a><a href="conta.html" style="display:block;padding:.9rem 0;border-bottom:1px solid rgba(216,201,184,.25);text-decoration:none;font-size:1.2rem">Minha conta</a></div></div>
 <style>.drawer.open{display:block !important}</style>
 <main>
   <!-- HERO -->
@@ -146,31 +135,7 @@
   </section>
 <section style="text-align:center"><p><a href="servicos.html">Serviços</a> • <a href="conta.html">Minha conta</a> • <a href="chat.html">Chat</a></p><p>BESTUDIO • Maputo</p></section></main>
 
-<script>
-(function () {
-  var sections = document.querySelectorAll('main section');
-  sections.forEach(function (s) { s.classList.add('reveal'); });
-  var io = new IntersectionObserver(function (entries) {
-    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
-  }, { threshold: 0.12 });
-  sections.forEach(function (s) { io.observe(s); });
-})();
-</script>
-<script>
-(function () {
-  var els = [];
-  var logo = document.querySelector('header .logo'); if (logo) els.push(logo);
-  document.querySelectorAll('main h1, main h2').forEach(function (h) { els.push(h); });
-  els.forEach(function (el) {
-    var text = el.textContent; if (!text) return; var n = text.length; if (n < 2) return;
-    el.innerHTML = text.split("").map(function (ch, i) {
-      var f = i / (n - 1);
-      var r = Math.round(255 * (1 - f) + 26 * f);
-      var g = Math.round(43 * (1 - f)); var b = Math.round(43 * (1 - f));
-      return '<span style="color:rgb(' + r + ',' + g + ',' + b + ');text-shadow:0 0 10px rgba(255,30,30,.25)">' + (ch === " " ? "&nbsp;" : ch) + "</span>";
-    }).join("");
-  });
-})();
-</script>
+
+
 </body>
 </html>
