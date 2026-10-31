@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Reservar | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
-<header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">○</a></header>
-<div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a><a href="admin.html">Admin</a></div></div>
+<header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">Conta</a></header>
+<div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a></div></div>
 <main><p class="eyebrow">Reserva • Maputo</p><h1>Reservar sessão</h1><div id="box"></div></main>
 <script>
 var q = new URLSearchParams(location.search);
@@ -9,7 +9,7 @@ if (!s) { document.getElementById("box").innerHTML = "<p>Escolhe primeiro um ser
 else {
   var qty = Math.max(1, parseInt(q.get("qty")) || 1), total = s.price * qty, fee = window.bestudio.fee();
   document.getElementById("box").innerHTML =
-    '<div class="card"><img src="' + s.img + '" alt="' + s.name + '"><h3>' + s.name + '</h3><p>' + s.desc + '</p></div>' +
+    '<div class="card"><img src="' + s.img + '" alt="' + s.name + '" style="border-radius:12px"><h3 style="margin-top:1rem">' + s.name + '</h3><p class="muted">' + s.desc + '</p></div>' +
     '<div class="row"><p>Serviço</p><p>' + fmtMT(s.price) + " / " + s.unit + " × " + qty + '</p></div>' +
     '<div class="row"><p>Total do serviço</p><p><strong>' + fmtMT(total) + '</strong></p></div>' +
     '<div class="row"><p>Taxa de reserva (conta para o final)</p><p><strong>' + fmtMT(fee) + '</strong></p></div>' +
@@ -21,8 +21,8 @@ else {
     '<label>Número M-Pesa (para a taxa de reserva)</label><input id="phone" type="tel" placeholder="Ex.: 84XXXXXXX">' +
     '<div class="note"><p><strong>Antes de pagar:</strong> a taxa de reserva garante a tua sessão e conta para o pagamento final, não é um custo extra.</p></div>' +
     '<p id="msg"></p><p><button class="btn btn-primary" id="confirm">Confirmar reserva</button></p>' +
-    '<p><button class="btn" id="chat">Falar com o estúdio antes de reservar</button></p>';
-  document.getElementById("chat").onclick = function () {
+    '<p><a class="linkarrow" id="chat" href="#">Falar com o estúdio antes de reservar</a></p>';
+  document.getElementById("chat").onclick = function (e) { e.preventDefault();
     if (!window.bestudio.requireAccount("chat.html")) return; location.href = "chat.html";
   };
   document.getElementById("confirm").onclick = function () {
