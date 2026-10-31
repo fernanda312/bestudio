@@ -1,21 +1,69 @@
-<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chat | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body>
+<!DOCTYPE html><html lang="pt"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Chat | BESTUDIO Maputo</title><link rel="stylesheet" href="css/bestudio.css"><script src="js/config.js"></script><script src="js/services.js"></script><script src="js/app.js"></script></head><body class="chatpage">
 <header><button class="menu" onclick="document.getElementById('drawer').classList.add('open')">≡</button><a class="logo" href="index.html">BESTUDIO</a><a class="icons" href="conta.html">○</a></header>
 <div class="drawer" id="drawer" onclick="this.classList.remove('open')"><div class="box" onclick="event.stopPropagation()"><a href="index.html">Início</a><a href="servicos.html">Todos os serviços</a><a href="conta.html">Minha conta</a><a href="admin.html">Admin</a></div></div>
 <main style="padding:0;max-width:none"><div class="chatwrap" id="wrap"></div></main>
 <script>
 var s = window.bestudio.session();
-if (!s) { document.getElementById("wrap").innerHTML = "<h1>Chat</h1><p>Entra na tua conta para falar com o estúdio.</p><p><a class='btn' href='conta.html'>Entrar / Criar conta</a></p>"; }
+if (!s) { document.getElementById("wrap").innerHTML = "<div style='padding:2rem;text-align:center'><h1>Chat</h1><p>Entra na tua conta para falar com o estúdio.</p><p><a class='btn' href='conta.html'>Entrar / Criar conta</a></p></div>"; }
 else {
-  document.getElementById("wrap").innerHTML = '<div class="chathead"><a class="chatback" href="conta.html">‹</a><div><strong>BESTUDIO</strong><small>Estúdio • Maputo</small></div><span>' + s.email + '</span></div><div class="msgs" id="msgs"></div><div class="chatbar"><input id="text" placeholder="Escreve a tua mensagem..."><button class="btn btn-primary" id="send" style="margin:0">Enviar</button></div>';
+  var wa = window.bestudio.whatsappUrl();
+  document.getElementById("wrap").innerHTML = '<div class="chathead"><a class="chatback" href="conta.html">‹</a><div><strong>BESTUDIO</strong><small>Estúdio • Maputo</small></div><a class="wabtn" href="' + wa + '" target="_blank" rel="noopener">WhatsApp</a></div><div class="msgs" id="msgs"></div><div class="attachpreview" id="attachPreview" style="display:none"></div><div class="chatbar"><button class="attachbtn" id="attachBtn" title="Anexar ficheiro, foto ou vídeo">📎</button><input type="file" id="fileInput" style="display:none" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt"><button class="micbtn" id="micBtn" title="Gravar áudio">🎤</button><input id="text" placeholder="Escreve a tua mensagem..."><button class="btn btn-primary" id="send" style="margin:0">Enviar</button></div>';
+  var pending = null, recorder = null, chunks = [], recording = false;
+  function hh(at) { try { var d = new Date(at); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); } catch (e) { return ""; } }
+  function attachHTML(m) {
+    if (!m.fileData) return "";
+    if ((m.fileType || "").indexOf("image/") === 0) return '<img src="' + m.fileData + '" alt="Imagem anexada" style="max-width:100%;border-radius:10px;margin-top:.4rem">';
+    if ((m.fileType || "").indexOf("video/") === 0) return '<video controls src="' + m.fileData + '" style="max-width:100%;border-radius:10px;margin-top:.4rem"></video>';
+    if ((m.fileType || "").indexOf("audio/") === 0) return '<audio controls src="' + m.fileData + '" style="width:100%;margin-top:.4rem"></audio>';
+    return '<p><a href="' + m.fileData + '" download="' + (m.fileName || "ficheiro") + '">📄 ' + (m.fileName || "Ficheiro") + '</a></p>';
+  }
   function render() {
     var all = window.bestudio.messages().filter(function (m) { return m.email === s.email || m.to === s.email; });
-    function hh(at) { try { var d = new Date(at); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); } catch (e) { return ""; } }
-    document.getElementById("msgs").innerHTML = all.length ? all.map(function (m) { return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : "Tu") + '</small>' + m.text + '<span class="mtime">' + hh(m.at) + '</span></div>'; }).join("") : '<div class="msg studio"><small>BESTUDIO</small>Olá! Conta-nos a tua ideia, o serviço e a data que queres.<span class="mtime"></span></div>';
+    document.getElementById("msgs").innerHTML = all.length ? all.map(function (m) { return '<div class="msg ' + (m.from === "studio" ? "studio" : "me") + '"><small>' + (m.from === "studio" ? "BESTUDIO" : "Tu") + '</small>' + (m.text || "") + attachHTML(m) + '<span class="mtime">' + hh(m.at) + '</span></div>'; }).join("") : '<div class="msg studio"><small>BESTUDIO</small>Olá! Conta-nos a tua ideia, o serviço e a data que queres. Podes escrever, gravar áudio ou anexar fotos e vídeos.<span class="mtime"></span></div>';
     var box = document.getElementById("msgs"); box.scrollTop = box.scrollHeight;
   }
-  function sendMsg() { var t = document.getElementById("text").value.trim(); if (!t) return; window.bestudio.addMessage({ email: s.email, from: "me", text: t }); document.getElementById("text").value = ""; render(); }
+  function showPreview() {
+    var el = document.getElementById("attachPreview");
+    if (!pending) { el.style.display = "none"; el.innerHTML = ""; return; }
+    el.style.display = "flex"; el.innerHTML = "<span>📎 Anexado: " + pending.name + " — toca em Enviar</span><button id='clearAttach' style='background:none;border:none;cursor:pointer;font-size:1.2rem'>✕</button>";
+    document.getElementById("clearAttach").onclick = function () { pending = null; document.getElementById("fileInput").value = ""; showPreview(); };
+  }
+  function sendMsg() {
+    var t = document.getElementById("text").value.trim();
+    if (!t && !pending) return;
+    var msg = { email: s.email, from: "me", text: t };
+    if (pending) { msg.fileData = pending.data; msg.fileType = pending.type; msg.fileName = pending.name; }
+    window.bestudio.addMessage(msg);
+    document.getElementById("text").value = ""; pending = null; document.getElementById("fileInput").value = ""; showPreview(); render();
+  }
   document.getElementById("send").onclick = sendMsg;
   document.getElementById("text").addEventListener("keydown", function (e) { if (e.key === "Enter") sendMsg(); });
+  document.getElementById("attachBtn").onclick = function () { document.getElementById("fileInput").click(); };
+  document.getElementById("fileInput").addEventListener("change", function () {
+    var f = this.files[0]; if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { alert("Ficheiro demasiado grande. Máximo 5 MB."); this.value = ""; return; }
+    var r = new FileReader();
+    r.onload = function () { pending = { name: f.name, type: f.type, data: r.result }; showPreview(); };
+    r.readAsDataURL(f);
+  });
+  document.getElementById("micBtn").onclick = async function () {
+    var btn = document.getElementById("micBtn");
+    if (recording) { recorder.stop(); return; }
+    try {
+      var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      chunks = []; recorder = new MediaRecorder(stream);
+      recorder.ondataavailable = function (e) { if (e.data.size) chunks.push(e.data); };
+      recorder.onstop = function () {
+        recording = false; btn.classList.remove("recording"); btn.textContent = "🎤";
+        stream.getTracks().forEach(function (tr) { tr.stop(); });
+        var blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+        var r = new FileReader();
+        r.onload = function () { window.bestudio.addMessage({ email: s.email, from: "me", text: "", fileData: r.result, fileType: blob.type, fileName: "Áudio" }); render(); };
+        r.readAsDataURL(blob);
+      };
+      recorder.start(); recording = true; btn.classList.add("recording"); btn.textContent = "⏹";
+    } catch (e) { alert("Não consegui aceder ao microfone. Verifica a permissão do navegador."); }
+  };
   render();
 }
 </script></body></html>

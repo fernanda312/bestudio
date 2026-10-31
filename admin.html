@@ -29,8 +29,10 @@ else {
   document.getElementById("box").innerHTML =
     '<p>Admin: <strong>' + s.email + '</strong> • Taxa de reserva atual: ' + fmtMT(window.bestudio.fee()) + ' (muda-se em js/config.js, BOOKING_FEE)</p>' +
     '<div class="note"><p><strong>Ligação por fazer:</strong> projeto Supabase + chaves do fornecedor M-Pesa. Sem isso, reservas e chat ficam só neste dispositivo e o pagamento fica “a aguardar pagamento”, sem fingir pagamento.</p></div>' +
+    '<h2>WhatsApp</h2><label>Link do WhatsApp (botão do chat)</label><input id="wa" value="' + window.bestudio.whatsappUrl() + '"><p><button class="btn" id="savewa">Guardar link WhatsApp</button></p>' +
     '<h2>Reservas</h2><div id="blist"></div><h2>Preços dos serviços</h2><div id="slist"></div>' +
     '<h2>Responder no chat</h2><label>Email do cliente</label><input id="to" placeholder="email do cliente"><label>Mensagem</label><textarea id="rtext"></textarea><p><button class="btn btn-primary" id="reply">Enviar resposta</button></p>';
+  document.getElementById("savewa").onclick = function () { var v = document.getElementById("wa").value.trim(); if (!v) return; localStorage.setItem("bestudio_whatsapp_url", JSON.stringify(v)); alert("Link WhatsApp guardado."); };
   document.getElementById("reply").onclick = function () { var to = document.getElementById("to").value.trim(), t = document.getElementById("rtext").value.trim(); if (!to || !t) return; window.bestudio.addMessage({ email: to, to: to, from: "studio", text: t }); document.getElementById("rtext").value = ""; alert("Resposta guardada no chat do cliente."); };
   renderBookings(); renderServices();
 }
