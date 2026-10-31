@@ -6,7 +6,7 @@
 // a viver na base de dados. NUNCA pôr aqui a chave secreta (service_role).
 window.BESTUDIO_CONFIG = {
   SUPABASE_URL: "https://jtaxmzjtbffrbyyeykxz.supabase.co",
-  SUPABASE_ANON_KEY: "", // <-- a dona envia a chave pública (publishable) em Settings > API, para eu completar a ligação
+  SUPABASE_ANON_KEY: "sb_publishable_1VvIijXs-apf-yHUJJd5cg_Wq4hAsM4", // chave pública enviada pela dona em 2026-10-31, Settings > API
   // Email do admin, indicado pela dona em 2026-10-31.
   ADMIN_EMAIL: "yociha9742@stosan.com",
   // Taxa de reserva para segurar a sessão. Conta para o pagamento final,
